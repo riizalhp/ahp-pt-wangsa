@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+@theme {
+  --color-teal: #009688;
+  --color-teal-dark: #00695C;
+  --color-teal-light: #E0F2F1;
+  --color-teal-50: #E0F2F1;
+  --color-teal-500: #009688;
+  --color-teal-700: #00695C;
+}
+
+body {
+  font-family: 'Inter', 'Poppins', system-ui, sans-serif;
+  background-color: #f8fafc; /* bg-slate-50 */
+  color: #334155; /* text-slate-700 */
+}
