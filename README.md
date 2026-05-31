@@ -19,7 +19,7 @@ Panduan ini dibuat khusus untuk memudahkan proses instalasi aplikasi di perangka
 Sebelum memulai instalasi website, Anda perlu mengunduh dan menginstal beberapa software pendukung berikut ini. Silakan unduh melalui tautan resmi di bawah:
 
 ### A. XAMPP (Versi PHP 8.2 ke atas)
-* **Kegunaan**: Menyediakan mesin PHP untuk menjalankan website dan mengelola sistem di komputer Anda.
+* **Kegunaan**: Menyediakan mesin PHP untuk menjalankan website serta database **MySQL** (lewat modul MySQL/phpMyAdmin) untuk menyimpan data aplikasi.
 * **Link Unduh**: [Unduh XAMPP Resmi](https://www.apachefriends.org/download.html)
 * **Catatan**: Pastikan Anda memilih versi **PHP 8.2.x** atau **PHP 8.3.x** saat mengunduh. Jangan unduh versi yang di bawahnya karena website tidak akan berjalan.
 
@@ -71,9 +71,26 @@ Agar perintah PHP dapat dikenali di komputer Anda, ikuti panduan berikut:
 2. Cari file bernama `.env.example`.
 3. Klik kanan file tersebut, lalu pilih **Copy** (Salin), kemudian **Paste** (Tempel) di folder yang sama.
 4. Klik kanan file salinan tersebut, lalu ubah namanya (Rename) menjadi `.env` (pastikan tanda titik di depan tetap ada dan hapus tulisan `.example`).
-5. *Catatan*: Website ini menggunakan database internal bertipe **SQLite** (file `database.sqlite` di dalam folder `database`). Anda tidak perlu melakukan setting database di phpMyAdmin XAMPP karena database sudah terkonfigurasi otomatis dan siap digunakan.
+5. Buka file `.env` tersebut menggunakan Notepad (atau editor teks lainnya), lalu pastikan bagian pengaturan database berisi seperti berikut ini:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=spk_supplier
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
+   *Catatan: Secara bawaan XAMPP, username database adalah `root` dan password-nya kosong (dibiarkan tanpa diisi). Simpan file `.env` setelah selesai.*
 
-### Langkah 5: Menginstal Komponen Website
+### Langkah 5: Membuat Database di phpMyAdmin
+Website ini menggunakan database **MySQL**, jadi Anda perlu menyiapkan database kosong terlebih dahulu:
+1. Buka aplikasi **XAMPP Control Panel**, lalu klik tombol **Start** pada modul **Apache** dan **MySQL** hingga keduanya berwarna hijau.
+2. Buka browser, lalu akses alamat **[http://localhost/phpmyadmin](http://localhost/phpmyadmin)**.
+3. Pada menu sebelah kiri, klik tombol **New** (Baru).
+4. Pada kolom **Database name**, ketik nama database: `spk_supplier` (harus sama persis dengan yang ada di file `.env`).
+5. Klik tombol **Create** (Buat). Database kosong akan terbuat. Anda **tidak perlu** membuat tabel secara manual karena tabel akan dibuat otomatis pada langkah berikutnya.
+
+### Langkah 6: Menginstal Komponen Website
 1. Buka aplikasi **Command Prompt** (cmd) di Windows Anda.
 2. Masuk ke folder website Anda dengan mengetik perintah berikut dan tekan Enter:
    ```bash
@@ -85,7 +102,9 @@ Agar perintah PHP dapat dikenali di komputer Anda, ikuti panduan berikut:
    ```
    *Tunggu prosesnya sampai selesai. Proses ini memerlukan koneksi internet stabil.*
 
-### Langkah 6: Membuat Kunci Keamanan & Menyiapkan Database
+### Langkah 7: Membuat Kunci Keamanan & Menyiapkan Database
+Sebelum menjalankan perintah ini, pastikan modul **MySQL** di XAMPP Control Panel sudah aktif (hijau) dan database `spk_supplier` sudah dibuat (Langkah 5).
+
 Tetap di Command Prompt Anda pada folder website, lalu jalankan dua perintah berikut satu per satu:
 
 1. **Membuat Kunci Aplikasi:**
@@ -96,7 +115,7 @@ Tetap di Command Prompt Anda pada folder website, lalu jalankan dua perintah ber
    ```bash
    php artisan migrate --seed
    ```
-   *Jika muncul pertanyaan: `"Database does not exist. Do you want to create it? (yes/no)"`, ketik `yes` lalu tekan Enter.*
+   *Perintah ini akan otomatis membuat seluruh tabel di dalam database `spk_supplier` dan mengisi akun default. Anda tidak perlu membuat tabel secara manual di phpMyAdmin.*
 
 ---
 
@@ -104,20 +123,21 @@ Tetap di Command Prompt Anda pada folder website, lalu jalankan dua perintah ber
 
 Setiap kali Anda ingin membuka website ini di komputer Anda, ikuti langkah mudah berikut:
 
-1. Buka **Command Prompt** (cmd).
-2. Masuk ke folder website Anda:
+1. Buka **XAMPP Control Panel**, lalu klik **Start** pada modul **Apache** dan **MySQL** (harus berwarna hijau). Langkah ini wajib karena data website tersimpan di database MySQL.
+2. Buka **Command Prompt** (cmd).
+3. Masuk ke folder website Anda:
    ```bash
    cd C:\xampp\htdocs\pt-wangsa-ahp
    ```
-3. Jalankan server lokal dengan perintah:
+4. Jalankan server lokal dengan perintah:
    ```bash
    php artisan serve
    ```
-4. Setelah muncul teks `Server running on [http://127.0.0.1:8000]`, buka browser internet Anda (seperti Google Chrome atau Microsoft Edge).
-5. Ketik alamat berikut di bagian atas browser Anda:
+5. Setelah muncul teks `Server running on [http://127.0.0.1:8000]`, buka browser internet Anda (seperti Google Chrome atau Microsoft Edge).
+6. Ketik alamat berikut di bagian atas browser Anda:
    **[http://127.0.0.1:8000](http://127.0.0.1:8000)** atau **[http://localhost:8000](http://localhost:8000)**
-6. Tekan Enter. Halaman website SPK akan tampil dan siap digunakan!
-7. *Penting*: Jangan menutup Command Prompt selama Anda membuka website tersebut. Jika ingin mematikan website, tekan tombol `Ctrl + C` secara bersamaan di Command Prompt.
+7. Tekan Enter. Halaman website SPK akan tampil dan siap digunakan!
+8. *Penting*: Jangan menutup Command Prompt selama Anda membuka website tersebut. Jika ingin mematikan website, tekan tombol `Ctrl + C` secara bersamaan di Command Prompt.
 
 ---
 
