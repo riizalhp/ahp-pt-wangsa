@@ -9,8 +9,9 @@ Panduan ini dibuat khusus untuk memudahkan proses instalasi aplikasi di perangka
 1. [Prasyarat (Aplikasi yang Harus Diinstal)](#1-prasyarat-aplikasi-yang-harus-diinstal)
 2. [Langkah-Langkah Instalasi Aplikasi](#2-langkah-langkah-instalasi-aplikasi)
 3. [Cara Menjalankan Aplikasi](#3-cara-menjalankan-aplikasi)
-4. [Kredensial Akun Default (Untuk Login)](#4-kredensial-akun-default-untuk-login)
-5. [Penyelesaian Masalah (Troubleshooting)](#5-penyelesaian-masalah-troubleshooting)
+4. [Memperbarui Aplikasi (Menarik Versi Terbaru)](#4-memperbarui-aplikasi-menarik-versi-terbaru)
+5. [Kredensial Akun Default (Untuk Login)](#5-kredensial-akun-default-untuk-login)
+6. [Penyelesaian Masalah (Troubleshooting)](#6-penyelesaian-masalah-troubleshooting)
 
 ---
 
@@ -141,7 +142,71 @@ Setiap kali Anda ingin membuka website ini di komputer Anda, ikuti langkah mudah
 
 ---
 
-## 4. Kredensial Akun Default (Untuk Login)
+## 4. Memperbarui Aplikasi (Menarik Versi Terbaru)
+
+Bagian ini ditujukan untuk Anda yang **sudah pernah meng-clone / mengunduh** website ini sebelumnya dan ingin mengambil pembaruan terbaru (versi yang sudah dipindah ke database **MySQL**). Ikuti langkah berikut sesuai cara Anda mengunduh website pertama kali.
+
+> ⚠️ **Penting:** Mulai versi ini, website **tidak lagi menggunakan SQLite**, melainkan **MySQL**. Jadi pastikan modul **MySQL** di XAMPP sudah aktif dan database `spk_supplier` sudah dibuat (lihat [Langkah 5](#langkah-5-membuat-database-di-phpmyadmin) pada bagian instalasi) sebelum menjalankan langkah di bawah.
+
+### A. Jika Anda Mengunduh Lewat Git (clone)
+
+1. Buka **XAMPP Control Panel**, lalu **Start** modul **Apache** dan **MySQL** hingga berwarna hijau.
+2. Buka **Command Prompt** (cmd) dan masuk ke folder website:
+   ```bash
+   cd C:\xampp\htdocs\pt-wangsa-ahp
+   ```
+3. Tarik versi terbaru dari GitHub:
+   ```bash
+   git pull
+   ```
+   *Jika muncul pesan konflik karena Anda pernah mengubah file (misalnya `.env`), aman saja — file `.env` Anda tidak akan tertimpa karena tidak ikut dilacak Git.*
+4. Perbarui komponen website (jika ada modul baru yang ditambahkan):
+   ```bash
+   composer install
+   ```
+5. Pastikan pengaturan database di file `.env` Anda sudah memakai MySQL:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=spk_supplier
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
+6. Bersihkan cache pengaturan lama agar koneksi MySQL terbaca:
+   ```bash
+   php artisan config:clear
+   ```
+7. Terapkan perubahan struktur tabel terbaru (jika ada migrasi baru):
+   ```bash
+   php artisan migrate
+   ```
+   *Perintah ini hanya menjalankan tabel yang belum ada. Data Anda yang sudah tersimpan di MySQL tidak akan terhapus.*
+
+### B. Jika Anda Mengunduh Lewat File ZIP (Download ZIP)
+
+Karena versi ZIP tidak terhubung ke Git, Anda perlu mengunduh ulang lalu menyalin kembali pengaturan Anda:
+
+1. Unduh ulang file ZIP terbaru dari GitHub (tombol **Code** → **Download ZIP**), lalu ekstrak.
+2. **Simpan dulu** file `.env` lama Anda dari folder website yang lama (salin ke tempat aman). File ini berisi pengaturan database Anda.
+3. Ganti folder website lama dengan hasil ekstrak yang baru di `C:\xampp\htdocs\pt-wangsa-ahp`.
+4. Kembalikan file `.env` lama Anda ke dalam folder website yang baru (timpa `.env` bawaan bila ada).
+5. Buka Command Prompt di folder website, lalu jalankan:
+   ```bash
+   composer install
+   php artisan config:clear
+   php artisan migrate
+   ```
+
+### ⚠️ Catatan Penting Saat Memperbarui
+
+* **Jangan menjalankan `php artisan migrate:fresh`** kecuali Anda benar-benar ingin **menghapus seluruh data** dan memulai dari awal. Perintah ini akan mengosongkan semua tabel beserta isinya.
+* Jika ingin sekaligus mengisi ulang akun default (hanya saat database masih kosong), gunakan `php artisan migrate --seed`.
+* Selalu pastikan **MySQL aktif** di XAMPP sebelum menjalankan perintah `artisan` apa pun, agar tidak muncul error koneksi database.
+
+---
+
+## 5. Kredensial Akun Default (Untuk Login)
 
 Berikut adalah daftar akun default yang sudah otomatis terdaftar di database untuk keperluan uji coba website SPK ini:
 
@@ -153,13 +218,17 @@ Berikut adalah daftar akun default yang sudah otomatis terdaftar di database unt
 
 ---
 
-## 5. Penyelesaian Masalah (Troubleshooting)
+## 6. Penyelesaian Masalah (Troubleshooting)
 
 Berikut adalah solusi jika Anda menemui kendala saat instalasi:
 
 * **Kendala: Perintah `php` atau `composer` tidak dikenal (*not recognized*)**
   * *Solusi*: Anda belum mendaftarkan PHP XAMPP ke Environment Variables Windows (Langkah 2 di atas). Pastikan Anda sudah mengikuti panduan tersebut dengan benar, lalu **tutup dan buka kembali** jendela Command Prompt Anda agar sistem memperbarui pengaturannya.
 * **Kendala: Muncul error database ketika menjalankan perintah migrate**
-  * *Solusi*: Pastikan file `.env` sudah dibuat dengan benar dari salinan `.env.example`. Di dalam file `.env`, pastikan baris `DB_CONNECTION=sqlite` aktif dan tidak ada tanda pagar (`#`) di depannya.
+  * *Solusi*: Pastikan modul **MySQL** di XAMPP Control Panel sudah aktif (berwarna hijau) dan database `spk_supplier` sudah Anda buat di phpMyAdmin (Langkah 5). Selain itu, periksa kembali file `.env` Anda: pastikan baris `DB_CONNECTION=mysql`, `DB_DATABASE=spk_supplier`, `DB_USERNAME=root`, dan `DB_PASSWORD=` (kosong) sudah sesuai.
+* **Kendala: Muncul pesan error `SQLSTATE[HY000] [2002]` atau `Connection refused`**
+  * *Solusi*: Pesan ini muncul karena MySQL belum berjalan. Buka **XAMPP Control Panel**, lalu klik **Start** pada modul **MySQL** hingga berwarna hijau, kemudian coba jalankan lagi perintahnya.
+* **Kendala: Muncul pesan error `Unknown database 'spk_supplier'`**
+  * *Solusi*: Database belum dibuat. Ikuti kembali Langkah 5 untuk membuat database kosong bernama `spk_supplier` di phpMyAdmin.
 * **Kendala: Halaman website tampak berantakan atau tidak rapi**
   * *Solusi*: Tampilan web ini telah dikompilasi sebelumnya. Jika ingin memperbarui tampilan asetnya secara manual (memerlukan Node.js), Anda bisa menjalankan perintah `npm install` lalu dilanjutkan dengan `npm run build` di folder proyek Anda.
