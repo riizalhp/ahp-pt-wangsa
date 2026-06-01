@@ -230,5 +230,12 @@ Berikut adalah solusi jika Anda menemui kendala saat instalasi:
   * *Solusi*: Pesan ini muncul karena MySQL belum berjalan. Buka **XAMPP Control Panel**, lalu klik **Start** pada modul **MySQL** hingga berwarna hijau, kemudian coba jalankan lagi perintahnya.
 * **Kendala: Muncul pesan error `Unknown database 'spk_supplier'`**
   * *Solusi*: Database belum dibuat. Ikuti kembali Langkah 5 untuk membuat database kosong bernama `spk_supplier` di phpMyAdmin.
+* **Kendala: Muncul pesan error `1273 Unknown collation: 'utf8mb4_0900_ai_ci'`**
+  * *Solusi*: Error ini muncul jika database Anda menggunakan **MariaDB** (bawaan beberapa versi XAMPP), karena collation `utf8mb4_0900_ai_ci` hanya dikenal oleh MySQL 8. Pastikan file `.env` Anda memiliki dua baris berikut, lalu jalankan `php artisan config:clear`:
+    ```env
+    DB_CHARSET=utf8mb4
+    DB_COLLATION=utf8mb4_unicode_ci
+    ```
+    Jika Anda baru saja menyalin `.env` dari `.env.example` versi terbaru, baris ini sudah otomatis ada.
 * **Kendala: Halaman website tampak berantakan atau tidak rapi**
   * *Solusi*: Tampilan web ini telah dikompilasi sebelumnya. Jika ingin memperbarui tampilan asetnya secara manual (memerlukan Node.js), Anda bisa menjalankan perintah `npm install` lalu dilanjutkan dengan `npm run build` di folder proyek Anda.
