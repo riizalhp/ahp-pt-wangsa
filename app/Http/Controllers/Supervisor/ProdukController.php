@@ -3,66 +3,85 @@
 namespace App\Http\Controllers\Supervisor;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Supervisor\ProdukRequest;
+use App\Models\PengadaanDetail;
 use App\Models\Produk;
-use App\Models\Pengadaan;
+use App\Models\Supplier;
+use App\Support\NameSearch;
 use Illuminate\Http\Request;
 
 class ProdukController extends Controller
 {
-    public function index()
+    /**
+     * Display a listing of products with optional name search.
+     * Requirements: 2.6, 2.7
+     */
+    public function index(Request $request)
     {
-        $produks = Produk::all();
-        return view('supervisor.produk.index', compact('produks'));
+        $search = $request->search;
+
+        $query = Produk::with('supplier');
+        NameSearch::filter($query, 'nama', $search);
+        $produks = $query->get();
+
+        return view('supervisor.produk.index', compact('produks', 'search'));
     }
 
+    /**
+     * Show the form for creating a new product.
+     * Requirements: 2.1, 2.2
+     */
     public function create()
     {
-        return view('supervisor.produk.create');
+        $suppliers = Supplier::orderBy('nama')->get();
+
+        return view('supervisor.produk.create', compact('suppliers'));
     }
 
-    public function store(Request $request)
+    /**
+     * Store a newly created product.
+     * Requirements: 2.1, 2.3, 2.4, 2.5
+     */
+    public function store(ProdukRequest $request)
     {
-        $validated = $request->validate([
-            'kode' => 'required|string|unique:data_produk,kode',
-            'nama' => 'required|string|max:120',
-            'satuan' => 'required|string|max:50',
-            'harga' => 'required|numeric|min:0',
-        ]);
-
-        Produk::create($validated);
+        Produk::create($request->validated());
 
         return redirect()->route('supervisor.produk.index')
             ->with('success', 'Produk berhasil ditambahkan.');
     }
 
+    /**
+     * Show the form for editing an existing product.
+     * Requirements: 2.5
+     */
     public function edit(Produk $produk)
     {
-        return view('supervisor.produk.edit', compact('produk'));
+        $suppliers = Supplier::orderBy('nama')->get();
+
+        return view('supervisor.produk.edit', compact('produk', 'suppliers'));
     }
 
-    public function update(Request $request, Produk $produk)
+    /**
+     * Update the specified product.
+     * Requirements: 2.5
+     */
+    public function update(ProdukRequest $request, Produk $produk)
     {
-        $validated = $request->validate([
-            'kode' => 'required|string|unique:data_produk,kode,' . $produk->id,
-            'nama' => 'required|string|max:120',
-            'satuan' => 'required|string|max:50',
-            'harga' => 'required|numeric|min:0',
-        ]);
-
-        $produk->update($validated);
+        $produk->update($request->validated());
 
         return redirect()->route('supervisor.produk.index')
             ->with('success', 'Produk berhasil diperbarui.');
     }
 
+    /**
+     * Delete the specified product, guarded against use in procurement details.
+     * Requirements: 2.8
+     */
     public function destroy(Produk $produk)
     {
-        // Cascade-deletion guard (Req 2.6)
-        $hasPo = Pengadaan::where('produk_id', $produk->id)->exists();
-
-        if ($hasPo) {
+        if (PengadaanDetail::where('produk_id', $produk->id)->exists()) {
             return redirect()->route('supervisor.produk.index')
-                ->with('error', 'Produk "' . $produk->nama . '" tidak dapat dihapus karena masih digunakan dalam data pengadaan.');
+                ->with('error', 'Produk tidak dapat dihapus karena masih digunakan dalam data pengadaan.');
         }
 
         $produk->delete();

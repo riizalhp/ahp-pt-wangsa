@@ -11,36 +11,64 @@
             @method('PUT')
 
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <div>
-                    <label for="kode" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Kode Produk <span class="text-red-500">*</span></label>
-                    <input type="text" name="kode" id="kode" required value="{{ old('kode', $produk->kode) }}"
-                           class="block w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium"
-                           placeholder="Contoh: PRD001">
-                    @error('kode') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                <!-- Supplier -->
+                <div class="sm:col-span-2">
+                    <label for="supplier_id" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Supplier <span class="text-red-500">*</span></label>
+                    <select name="supplier_id" id="supplier_id" required
+                            class="block w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium">
+                        <option value="">-- Pilih Supplier --</option>
+                        @foreach($suppliers as $supplier)
+                            <option value="{{ $supplier->id }}" {{ old('supplier_id', $produk->supplier_id) == $supplier->id ? 'selected' : '' }}>
+                                {{ $supplier->nama }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('supplier_id') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                 </div>
 
-                <div>
+                <!-- Nama Produk -->
+                <div class="sm:col-span-2">
                     <label for="nama" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Nama Produk <span class="text-red-500">*</span></label>
                     <input type="text" name="nama" id="nama" required value="{{ old('nama', $produk->nama) }}"
                            class="block w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium"
-                           placeholder="Contoh: Kertas HVS A4 80gr">
+                           placeholder="Contoh: Duplex Coat 310 gr">
                     @error('nama') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                 </div>
 
+                <!-- Jenis Produk -->
                 <div>
-                    <label for="satuan" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Satuan Ukuran <span class="text-red-500">*</span></label>
-                    <input type="text" name="satuan" id="satuan" required value="{{ old('satuan', $produk->satuan) }}"
+                    <label for="jenis_produk" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Jenis Produk</label>
+                    <input type="text" name="jenis_produk" id="jenis_produk" value="{{ old('jenis_produk', $produk->jenis_produk) }}"
                            class="block w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium"
-                           placeholder="Contoh: Rim, Box, Roll, Kg">
-                    @error('satuan') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                           placeholder="Contoh: Duplex Coat 310 gr">
+                    @error('jenis_produk') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                 </div>
 
+                <!-- Merk -->
                 <div>
-                    <label for="harga" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Harga Satuan (Rp) <span class="text-red-500">*</span></label>
-                    <input type="number" step="0.01" name="harga" id="harga" required value="{{ old('harga', $produk->harga) }}"
+                    <label for="merk" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Merk</label>
+                    <input type="text" name="merk" id="merk" value="{{ old('merk', $produk->merk) }}"
                            class="block w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium"
-                           placeholder="Contoh: 45000">
-                    @error('harga') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                           placeholder="Contoh: Hansol">
+                    @error('merk') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                </div>
+
+                <!-- Ukuran -->
+                <div>
+                    <label for="ukuran" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Ukuran</label>
+                    <input type="text" name="ukuran" id="ukuran" value="{{ old('ukuran', $produk->ukuran) }}"
+                           class="block w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium"
+                           placeholder="Contoh: 79x109">
+                    @error('ukuran') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                </div>
+
+                <!-- Kapasitas Pasokan -->
+                <div>
+                    <label for="kapasitas_pasokan" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Kapasitas Pasokan</label>
+                    <input type="text" name="kapasitas_pasokan" id="kapasitas_pasokan" value="{{ old('kapasitas_pasokan', $produk->kapasitas_pasokan) }}"
+                           class="block w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium"
+                           placeholder="Contoh: 25-100 ton/minggu">
+                    @error('kapasitas_pasokan') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                 </div>
             </div>
 

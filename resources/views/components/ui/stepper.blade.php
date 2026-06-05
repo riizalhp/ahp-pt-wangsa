@@ -2,29 +2,35 @@
 
 @php
     $steps = [
+        'alternatif' => [
+            'label' => 'Alternatif',
+            'icon' => 'fa-boxes-stacked',
+            'route' => 'supervisor.ahp.alternatif',
+            'step' => 1
+        ],
         'kriteria' => [
             'label' => 'Kriteria',
             'icon' => 'fa-list-ol',
             'route' => 'supervisor.ahp.kriteria',
-            'step' => 1
+            'step' => 2
         ],
         'subkriteria' => [
             'label' => 'Subkriteria',
             'icon' => 'fa-layer-group',
             'route' => 'supervisor.ahp.subkriteria',
-            'step' => 2
+            'step' => 3
         ],
         'supplier' => [
             'label' => 'Supplier',
             'icon' => 'fa-truck-field',
             'route' => 'supervisor.ahp.supplier',
-            'step' => 3
+            'step' => 4
         ],
         'hasil' => [
             'label' => 'Hasil & Ranking',
             'icon' => 'fa-square-poll-vertical',
             'route' => 'supervisor.ahp.hasil',
-            'step' => 4
+            'step' => 5
         ]
     ];
 
@@ -62,7 +68,7 @@
                     </span>
                 </a>
 
-                @if($step['step'] < 4)
+                @if($step['step'] < 5)
                     <div class="flex-1 h-0.5 mx-4 rounded-full transition-colors duration-500
                         {{ $step['step'] < $activeStep ? 'bg-teal-dark' : 'bg-slate-200' }}">
                     </div>

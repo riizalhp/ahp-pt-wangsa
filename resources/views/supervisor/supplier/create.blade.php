@@ -27,7 +27,23 @@
                 </div>
 
                 <div>
-                    <label for="telepon" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Nomor Telepon</label>
+                    <label for="jenis_barang" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Jenis Barang <span class="text-red-500">*</span></label>
+                    <input type="text" name="jenis_barang" id="jenis_barang" required value="{{ old('jenis_barang') }}"
+                           class="block w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium"
+                           placeholder="Contoh: Alat Tulis Kantor">
+                    @error('jenis_barang') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                </div>
+
+                <div>
+                    <label for="kontak_person" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Kontak Person</label>
+                    <input type="text" name="kontak_person" id="kontak_person" value="{{ old('kontak_person') }}"
+                           class="block w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium"
+                           placeholder="Contoh: Budi Santoso">
+                    @error('kontak_person') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                </div>
+
+                <div>
+                    <label for="telepon" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">No Telp</label>
                     <input type="text" name="telepon" id="telepon" value="{{ old('telepon') }}"
                            class="block w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium"
                            placeholder="Contoh: 08123456789">
@@ -35,11 +51,11 @@
                 </div>
 
                 <div>
-                    <label for="email" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Alamat Email</label>
-                    <input type="email" name="email" id="email" value="{{ old('email') }}"
+                    <label for="lama_kerja_sama" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Lama Kerja Sama (Tahun)</label>
+                    <input type="number" name="lama_kerja_sama" id="lama_kerja_sama" min="0" value="{{ old('lama_kerja_sama') }}"
                            class="block w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium"
-                           placeholder="Contoh: info@supplier.com">
-                    @error('email') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                           placeholder="Contoh: 3">
+                    @error('lama_kerja_sama') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                 </div>
             </div>
 

@@ -7,10 +7,16 @@
         
         <!-- Supervisor only action button (Req 10.4) -->
         @if(auth()->user()->role === 'supervisor')
-            <button onclick="alert('Laporan penilaian berhasil diajukan ke jajaran manajemen.')" 
-                    class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-teal text-white text-xs font-bold hover:bg-teal-dark shadow-md shadow-teal/15 transition-all">
-                <i class="fas fa-paper-plane"></i> Ajukan Laporan
-            </button>
+            <div class="flex items-center gap-2">
+                <a href="{{ route('supervisor.laporan.penilaian.pdf') }}"
+                   class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-teal text-white text-xs font-bold hover:bg-teal-dark shadow-md shadow-teal/15 transition-all">
+                    <i class="fas fa-file-pdf mr-1"></i> Cetak PDF
+                </a>
+                <button onclick="alert('Laporan penilaian berhasil diajukan ke jajaran manajemen.')" 
+                        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-teal text-white text-xs font-bold hover:bg-teal-dark shadow-md shadow-teal/15 transition-all">
+                    <i class="fas fa-paper-plane"></i> Ajukan Laporan
+                </button>
+            </div>
         @endif
     </div>
 

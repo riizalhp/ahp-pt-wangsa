@@ -6,24 +6,21 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Produk extends Model
+class PengadaanHeader extends Model
 {
-    protected $table = 'data_produk';
+    protected $table = 'data_pengadaan_header';
 
     protected $fillable = [
-        'kode',
-        'nama',
-        'jenis_produk',
-        'merk',
-        'ukuran',
-        'kapasitas_pasokan',
         'supplier_id',
-        'satuan',
-        'harga',
+        'no_po',
+        'tanggal_po',
+        'tanggal_kedatangan_target',
+        'catatan',
     ];
 
     protected $casts = [
-        'harga' => 'decimal:2',
+        'tanggal_po' => 'date',
+        'tanggal_kedatangan_target' => 'date',
     ];
 
     public function supplier(): BelongsTo
@@ -33,11 +30,6 @@ class Produk extends Model
 
     public function detail(): HasMany
     {
-        return $this->hasMany(PengadaanDetail::class, 'produk_id');
-    }
-
-    public function pengadaan(): HasMany
-    {
-        return $this->hasMany(Pengadaan::class, 'produk_id');
+        return $this->hasMany(PengadaanDetail::class, 'pengadaan_id');
     }
 }

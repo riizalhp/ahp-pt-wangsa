@@ -3,72 +3,88 @@
 namespace App\Http\Controllers\Supervisor;
 
 use App\Http\Controllers\Controller;
-use App\Models\Supplier;
-use App\Models\Pengadaan;
+use App\Http\Requests\Supervisor\SupplierRequest;
+use App\Models\PengadaanHeader;
 use App\Models\PenilaianSupplier;
+use App\Models\Supplier;
+use App\Support\NameSearch;
 use Illuminate\Http\Request;
 
 class SupplierController extends Controller
 {
-    public function index()
+    /**
+     * Display the supplier list with optional name search.
+     * Validates: Requirements 1.5, 1.6, 1.7
+     */
+    public function index(Request $request)
     {
-        $suppliers = Supplier::all();
-        return view('supervisor.supplier.index', compact('suppliers'));
+        $search = $request->search;
+
+        $query = Supplier::query();
+        NameSearch::filter($query, 'nama', $search);
+
+        $suppliers = $query->get();
+
+        return view('supervisor.supplier.index', compact('suppliers', 'search'));
     }
 
+    /**
+     * Show the supplier creation form.
+     * Validates: Requirement 1.1
+     */
     public function create()
     {
         return view('supervisor.supplier.create');
     }
 
-    public function store(Request $request)
+    /**
+     * Persist a new supplier record.
+     * Validates: Requirements 1.1, 1.2, 1.3
+     */
+    public function store(SupplierRequest $request)
     {
-        $validated = $request->validate([
-            'kode' => 'required|string|unique:data_supplier,kode',
-            'nama' => 'required|string|max:120',
-            'alamat' => 'nullable|string',
-            'telepon' => 'nullable|string',
-            'email' => 'nullable|email',
-        ]);
-
-        Supplier::create($validated);
+        Supplier::create($request->validated());
 
         return redirect()->route('supervisor.supplier.index')
             ->with('success', 'Supplier berhasil ditambahkan.');
     }
 
+    /**
+     * Show the supplier edit form.
+     * Validates: Requirement 1.4
+     */
     public function edit(Supplier $supplier)
     {
         return view('supervisor.supplier.edit', compact('supplier'));
     }
 
-    public function update(Request $request, Supplier $supplier)
+    /**
+     * Persist updates to an existing supplier record.
+     * Validates: Requirement 1.4
+     */
+    public function update(SupplierRequest $request, Supplier $supplier)
     {
-        $validated = $request->validate([
-            'kode' => 'required|string|unique:data_supplier,kode,' . $supplier->id,
-            'nama' => 'required|string|max:120',
-            'alamat' => 'nullable|string',
-            'telepon' => 'nullable|string',
-            'email' => 'nullable|email',
-        ]);
-
-        $supplier->update($validated);
+        $supplier->update($request->validated());
 
         return redirect()->route('supervisor.supplier.index')
             ->with('success', 'Supplier berhasil diperbarui.');
     }
 
+    /**
+     * Delete a supplier after verifying it is not referenced elsewhere.
+     * Validates: Requirement 1.8
+     */
     public function destroy(Supplier $supplier)
     {
-        // Cascade-deletion guard (Req 2.6)
-        $hasPo = Pengadaan::where('supplier_id', $supplier->id)->exists();
-        $hasPenilaian = PenilaianSupplier::where('a_supplier_id', $supplier->id)
+        $usedByPo = PengadaanHeader::where('supplier_id', $supplier->id)->exists();
+
+        $usedByPenilaian = PenilaianSupplier::where('a_supplier_id', $supplier->id)
             ->orWhere('b_supplier_id', $supplier->id)
             ->exists();
 
-        if ($hasPo || $hasPenilaian) {
-            return redirect()->route('supervisor.supplier.index')
-                ->with('error', 'Supplier "' . $supplier->nama . '" tidak dapat dihapus karena masih digunakan dalam data pengadaan atau penilaian.');
+        if ($usedByPo || $usedByPenilaian) {
+            return redirect()->back()
+                ->with('error', 'Supplier tidak dapat dihapus karena masih digunakan.');
         }
 
         $supplier->delete();

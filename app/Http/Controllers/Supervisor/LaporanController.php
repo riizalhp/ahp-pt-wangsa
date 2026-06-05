@@ -5,19 +5,38 @@ namespace App\Http\Controllers\Supervisor;
 use App\Http\Controllers\Controller;
 use App\Models\HasilAhp;
 use App\Models\Pengadaan;
+use App\Models\PengadaanHeader;
 use App\Models\Supplier;
 use App\Models\Kriteria;
 use App\Models\PenilaianKriteria;
 use App\Services\Ahp\AhpCalculatorService;
+use App\Services\Report\PenilaianPdfService;
+use App\Services\Supplier\SupplierMetricsService;
 use Illuminate\Http\Request;
 
 class LaporanController extends Controller
 {
     protected $calculator;
+    protected $metricsService;
 
-    public function __construct(AhpCalculatorService $calculator)
+    public function __construct(AhpCalculatorService $calculator, SupplierMetricsService $metricsService)
     {
         $this->calculator = $calculator;
+        $this->metricsService = $metricsService;
+    }
+
+    public function penilaianPdf(PenilaianPdfService $pdfService)
+    {
+        if (!$pdfService->hasRanking()) {
+            return redirect()->back()->with('error', 'Belum ada hasil penilaian. Jalankan perhitungan AHP terlebih dahulu.');
+        }
+        return $pdfService->generatePdf();
+    }
+
+    public function kinerja()
+    {
+        $suppliers = $this->metricsService->suppliersWithPerformance();
+        return view('laporan.kinerja', compact('suppliers'));
     }
 
     public function penilaian()
@@ -43,17 +62,20 @@ class LaporanController extends Controller
         return view('laporan.penilaian', compact('rankings', 'kriterias', 'kriteriaWeights'));
     }
 
-    public function pengadaan(Request $request)
+    public function pengadaan()
     {
-        $query = Pengadaan::with(['supplier', 'produk']);
-
-        if ($request->filled('from') && $request->filled('to')) {
-            $query->whereBetween('tanggal_po', [$request->from, $request->to]);
-        }
-
-        $pengadaans = $query->orderBy('tanggal_po', 'desc')->get();
+        $pengadaans = PengadaanHeader::with(['supplier', 'detail.produk'])
+            ->orderBy('id', 'desc')
+            ->get();
 
         return view('laporan.pengadaan', compact('pengadaans'));
+    }
+
+    public function riwayatDetail($id)
+    {
+        $header = PengadaanHeader::with(['supplier', 'detail.produk'])->findOrFail($id);
+
+        return view('laporan.riwayat_detail', compact('header'));
     }
 
     public function profil()

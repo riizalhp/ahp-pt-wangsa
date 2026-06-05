@@ -52,7 +52,7 @@
             </a>
 
             <p class="px-3 pt-4 mb-2 text-[10px] font-bold text-slate-500 tracking-wider uppercase">Analisis & SPK</p>
-            <a href="{{ route('supervisor.ahp.kriteria') }}" class="flex items-center px-3 py-2.5 text-xs font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('supervisor.ahp.*') ? 'bg-teal text-white shadow-md shadow-teal/15 font-semibold' : 'text-slate-400 hover:bg-slate-800/60 hover:text-white' }}">
+            <a href="{{ route('supervisor.ahp.alternatif') }}" class="flex items-center px-3 py-2.5 text-xs font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('supervisor.ahp.*') ? 'bg-teal text-white shadow-md shadow-teal/15 font-semibold' : 'text-slate-400 hover:bg-slate-800/60 hover:text-white' }}">
                 <i class="w-5 fas fa-calculator text-sm mr-2 {{ request()->routeIs('supervisor.ahp.*') ? 'text-white' : 'text-slate-500' }}"></i>
                 Perhitungan AHP
             </a>
@@ -66,8 +66,8 @@
                 <i class="w-5 fas fa-file-contract text-sm mr-2 {{ request()->routeIs('supervisor.laporan.pengadaan') ? 'text-white' : 'text-slate-500' }}"></i>
                 Riwayat Pengadaan
             </a>
-            <a href="{{ route('supervisor.laporan.profil') }}" class="flex items-center px-3 py-2.5 text-xs font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('supervisor.laporan.profil') ? 'bg-teal text-white shadow-md shadow-teal/15 font-semibold' : 'text-slate-400 hover:bg-slate-800/60 hover:text-white' }}">
-                <i class="w-5 fas fa-clipboard-list text-sm mr-2 {{ request()->routeIs('supervisor.laporan.profil') ? 'text-white' : 'text-slate-500' }}"></i>
+            <a href="{{ route('supervisor.laporan.kinerja') }}" class="flex items-center px-3 py-2.5 text-xs font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('supervisor.laporan.kinerja') ? 'bg-teal text-white shadow-md shadow-teal/15 font-semibold' : 'text-slate-400 hover:bg-slate-800/60 hover:text-white' }}">
+                <i class="w-5 fas fa-clipboard-list text-sm mr-2 {{ request()->routeIs('supervisor.laporan.kinerja') ? 'text-white' : 'text-slate-500' }}"></i>
                 Kinerja Supplier
             </a>
         @elseif(auth()->user()?->role === 'sales')
@@ -77,23 +77,9 @@
                 <i class="w-5 fas fa-chart-line text-sm mr-2 {{ request()->routeIs('sales.dashboard') ? 'text-white' : 'text-slate-500' }}"></i>
                 Dashboard
             </a>
-            <a href="{{ route('sales.pengadaan.index') }}" class="flex items-center px-3 py-2.5 text-xs font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('sales.pengadaan.*') ? 'bg-teal text-white shadow-md shadow-teal/15 font-semibold' : 'text-slate-400 hover:bg-slate-800/60 hover:text-white' }}">
-                <i class="w-5 fas fa-file-invoice-dollar text-sm mr-2 {{ request()->routeIs('sales.pengadaan.*') ? 'text-white' : 'text-slate-500' }}"></i>
+            <a href="{{ route('sales.purchase_order.index') }}" class="flex items-center px-3 py-2.5 text-xs font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('sales.purchase_order.*') ? 'bg-teal text-white shadow-md shadow-teal/15 font-semibold' : 'text-slate-400 hover:bg-slate-800/60 hover:text-white' }}">
+                <i class="w-5 fas fa-file-invoice-dollar text-sm mr-2 {{ request()->routeIs('sales.purchase_order.*') ? 'text-white' : 'text-slate-500' }}"></i>
                 Purchase Order
-            </a>
-
-            <p class="px-3 pt-4 mb-2 text-[10px] font-bold text-slate-500 tracking-wider uppercase">Laporan</p>
-            <a href="{{ route('sales.laporan.penilaian') }}" class="flex items-center px-3 py-2.5 text-xs font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('sales.laporan.penilaian') ? 'bg-teal text-white shadow-md shadow-teal/15 font-semibold' : 'text-slate-400 hover:bg-slate-800/60 hover:text-white' }}">
-                <i class="w-5 fas fa-file-invoice text-sm mr-2 {{ request()->routeIs('sales.laporan.penilaian') ? 'text-white' : 'text-slate-500' }}"></i>
-                Hasil Penilaian
-            </a>
-            <a href="{{ route('sales.laporan.pengadaan') }}" class="flex items-center px-3 py-2.5 text-xs font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('sales.laporan.pengadaan') ? 'bg-teal text-white shadow-md shadow-teal/15 font-semibold' : 'text-slate-400 hover:bg-slate-800/60 hover:text-white' }}">
-                <i class="w-5 fas fa-file-contract text-sm mr-2 {{ request()->routeIs('sales.laporan.pengadaan') ? 'text-white' : 'text-slate-500' }}"></i>
-                Riwayat Pengadaan
-            </a>
-            <a href="{{ route('sales.laporan.profil') }}" class="flex items-center px-3 py-2.5 text-xs font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('sales.laporan.profil') ? 'bg-teal text-white shadow-md shadow-teal/15 font-semibold' : 'text-slate-400 hover:bg-slate-800/60 hover:text-white' }}">
-                <i class="w-5 fas fa-clipboard-list text-sm mr-2 {{ request()->routeIs('sales.laporan.profil') ? 'text-white' : 'text-slate-500' }}"></i>
-                Kinerja Supplier
             </a>
         @elseif(auth()->user()?->role === 'logistik')
             <!-- LOGISTIK MENU -->
@@ -102,23 +88,9 @@
                 <i class="w-5 fas fa-chart-line text-sm mr-2 {{ request()->routeIs('logistik.dashboard') ? 'text-white' : 'text-slate-500' }}"></i>
                 Dashboard
             </a>
-            <a href="{{ route('logistik.aktual.index') }}" class="flex items-center px-3 py-2.5 text-xs font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('logistik.aktual.*') ? 'bg-teal text-white shadow-md shadow-teal/15 font-semibold' : 'text-slate-400 hover:bg-slate-800/60 hover:text-white' }}">
-                <i class="w-5 fas fa-dolly text-sm mr-2 {{ request()->routeIs('logistik.aktual.*') ? 'text-white' : 'text-slate-500' }}"></i>
+            <a href="{{ route('logistik.penerimaan.index') }}" class="flex items-center px-3 py-2.5 text-xs font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('logistik.penerimaan.*') ? 'bg-teal text-white shadow-md shadow-teal/15 font-semibold' : 'text-slate-400 hover:bg-slate-800/60 hover:text-white' }}">
+                <i class="w-5 fas fa-dolly text-sm mr-2 {{ request()->routeIs('logistik.penerimaan.*') ? 'text-white' : 'text-slate-500' }}"></i>
                 Penerimaan Barang
-            </a>
-
-            <p class="px-3 pt-4 mb-2 text-[10px] font-bold text-slate-500 tracking-wider uppercase">Laporan</p>
-            <a href="{{ route('logistik.laporan.penilaian') }}" class="flex items-center px-3 py-2.5 text-xs font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('logistik.laporan.penilaian') ? 'bg-teal text-white shadow-md shadow-teal/15 font-semibold' : 'text-slate-400 hover:bg-slate-800/60 hover:text-white' }}">
-                <i class="w-5 fas fa-file-invoice text-sm mr-2 {{ request()->routeIs('logistik.laporan.penilaian') ? 'text-white' : 'text-slate-500' }}"></i>
-                Hasil Penilaian
-            </a>
-            <a href="{{ route('logistik.laporan.pengadaan') }}" class="flex items-center px-3 py-2.5 text-xs font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('logistik.laporan.pengadaan') ? 'bg-teal text-white shadow-md shadow-teal/15 font-semibold' : 'text-slate-400 hover:bg-slate-800/60 hover:text-white' }}">
-                <i class="w-5 fas fa-file-contract text-sm mr-2 {{ request()->routeIs('logistik.laporan.pengadaan') ? 'text-white' : 'text-slate-500' }}"></i>
-                Riwayat Pengadaan
-            </a>
-            <a href="{{ route('logistik.laporan.profil') }}" class="flex items-center px-3 py-2.5 text-xs font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('logistik.laporan.profil') ? 'bg-teal text-white shadow-md shadow-teal/15 font-semibold' : 'text-slate-400 hover:bg-slate-800/60 hover:text-white' }}">
-                <i class="w-5 fas fa-clipboard-list text-sm mr-2 {{ request()->routeIs('logistik.laporan.profil') ? 'text-white' : 'text-slate-500' }}"></i>
-                Kinerja Supplier
             </a>
         @endif
     </nav>

@@ -6,12 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\Kriteria;
 use App\Models\Subkriteria;
 use App\Models\Supplier;
+use App\Models\Produk;
 use App\Models\PenilaianKriteria;
 use App\Models\PenilaianSubkriteria;
 use App\Models\PenilaianSupplier;
 use App\Models\HasilAhp;
 use App\Services\Ahp\AhpCalculatorService;
 use App\Services\Ahp\RankingService;
+use App\Support\NameSearch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -217,11 +219,85 @@ class AhpController extends Controller
     }
 
     /**
+     * Step 0: Select Alternative Products for AHP (Req 10.1, 10.3)
+     */
+    public function alternatifForm(Request $request)
+    {
+        $search = $request->input('search');
+        $query = Produk::with('supplier');
+        $query = NameSearch::filter($query, 'nama', $search);
+        $produks = $query->get();
+
+        return view('supervisor.ahp.alternatif', compact('produks', 'search'));
+    }
+
+    /**
+     * Save Step 0: Store selected alternative suppliers in session (Req 10.2, 10.4, 10.5)
+     */
+    public function alternatifSave(Request $request)
+    {
+        // Validate at least 2 products selected (Req 10.4)
+        if (
+            !$request->has('selected_produk_ids') ||
+            !is_array($request->input('selected_produk_ids')) ||
+            count($request->input('selected_produk_ids')) < 2
+        ) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Pilih minimal 2 produk untuk perbandingan AHP.');
+        }
+
+        $request->validate([
+            'selected_produk_ids'   => 'required|array|min:2',
+            'selected_produk_ids.*' => 'integer|exists:data_produk,id',
+        ]);
+
+        // Load selected products with their supplier (Req 10.2, 10.5)
+        $produks = Produk::with('supplier')
+            ->whereIn('id', $request->selected_produk_ids)
+            ->get();
+
+        // Extract unique supplier IDs from the selected products
+        $supplierIds = $produks
+            ->pluck('supplier_id')
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        // Guard: all selected products must have a supplier linked
+        $produksTanpaSupplier = $produks->filter(fn($p) => is_null($p->supplier_id));
+        if ($produksTanpaSupplier->isNotEmpty()) {
+            $names = $produksTanpaSupplier->pluck('nama')->implode(', ');
+            return redirect()->back()
+                ->withInput()
+                ->with('error', "Produk berikut belum memiliki supplier: {$names}. Hubungkan produk ke supplier terlebih dahulu.");
+        }
+
+        // Guard: need at least 2 distinct suppliers to run AHP pairwise comparison
+        if (count($supplierIds) < 2) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Produk yang dipilih semuanya berasal dari supplier yang sama. Pilih produk dari minimal 2 supplier berbeda untuk perbandingan AHP.');
+        }
+
+        // Store in session so supplierForm can filter by these suppliers
+        session(['ahp_selected_suppliers' => $supplierIds]);
+
+        return redirect()->route('supervisor.ahp.supplier');
+    }
+
+    /**
      * Step 3: Pairwise Supplier Form
      */
     public function supplierForm()
     {
-        $suppliers = Supplier::all();
+        // Filter to session-selected suppliers if set (Req 10.5)
+        if (session()->has('ahp_selected_suppliers')) {
+            $suppliers = Supplier::whereIn('id', session('ahp_selected_suppliers'))->get();
+        } else {
+            $suppliers = Supplier::all();
+        }
         $subkriterias = Subkriteria::with('kriteria')->get();
 
         if ($suppliers->count() < 2) {

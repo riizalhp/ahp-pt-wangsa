@@ -6,6 +6,23 @@
         </a>
     </div>
 
+    <!-- Search Form -->
+    <form method="GET" action="{{ route('supervisor.supplier.index') }}" class="mb-5">
+        <div class="flex items-center gap-2 max-w-md">
+            <input type="text" name="search" value="{{ $search ?? '' }}"
+                   class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800"
+                   placeholder="Cari nama supplier...">
+            <button type="submit" class="shrink-0 px-4 py-2.5 rounded-xl bg-teal text-white text-xs font-bold hover:bg-teal-dark transition-colors duration-150">
+                Cari
+            </button>
+            @if(!empty($search))
+                <a href="{{ route('supervisor.supplier.index') }}" class="shrink-0 px-4 py-2.5 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold hover:bg-slate-200 transition-colors duration-150">
+                    Reset
+                </a>
+            @endif
+        </div>
+    </form>
+
     <!-- Suppliers Table Card -->
     <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
         <div class="p-6 overflow-x-auto">
@@ -14,7 +31,13 @@
                     <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-3">
                         <i class="fas fa-truck-fast"></i>
                     </div>
-                    <p class="text-sm text-slate-500 font-medium">Belum ada data supplier. Klik "Tambah Supplier" untuk memulai.</p>
+                    <p class="text-sm text-slate-500 font-medium">
+                        @if(!empty($search))
+                            Tidak ada supplier dengan nama "{{ $search }}".
+                        @else
+                            Belum ada data supplier. Klik "Tambah Supplier" untuk memulai.
+                        @endif
+                    </p>
                 </div>
             @else
                 <table class="min-w-full divide-y divide-slate-200">
@@ -22,11 +45,11 @@
                         <tr class="text-left text-xs font-bold text-slate-400 uppercase tracking-wider">
                             <th class="pb-4">Kode</th>
                             <th class="pb-4">Nama Supplier</th>
-                            <th class="pb-4">Kontak</th>
+                            <th class="pb-4">Jenis Barang</th>
+                            <th class="pb-4">Kontak Person</th>
+                            <th class="pb-4">No Telp</th>
                             <th class="pb-4">Alamat</th>
-                            <th class="pb-4 text-center">Rekap Cacat</th>
-                            <th class="pb-4 text-center">Rekap Terlambat</th>
-                            <th class="pb-4 text-center">Rata-rata Terlambat</th>
+                            <th class="pb-4 text-center">Lama Kerja Sama</th>
                             <th class="pb-4 text-right">Aksi</th>
                         </tr>
                     </thead>
@@ -35,27 +58,16 @@
                             <tr>
                                 <td class="py-4 font-semibold text-slate-500">{{ $supplier->kode }}</td>
                                 <td class="py-4 font-bold text-slate-800">{{ $supplier->nama }}</td>
-                                <td class="py-4 text-slate-600 space-y-0.5">
-                                    @if($supplier->telepon)
-                                        <div class="flex items-center gap-1 text-xs"><i class="fas fa-phone text-slate-400 text-[10px]"></i> {{ $supplier->telepon }}</div>
-                                    @endif
-                                    @if($supplier->email)
-                                        <div class="flex items-center gap-1 text-xs"><i class="fas fa-envelope text-slate-400 text-[10px]"></i> {{ $supplier->email }}</div>
-                                    @endif
-                                </td>
+                                <td class="py-4 text-slate-600 text-xs">{{ $supplier->jenis_barang ?? '-' }}</td>
+                                <td class="py-4 text-slate-600 text-xs">{{ $supplier->kontak_person ?? '-' }}</td>
+                                <td class="py-4 text-slate-600 text-xs">{{ $supplier->telepon ?? '-' }}</td>
                                 <td class="py-4 text-slate-500 max-w-xs truncate text-xs">{{ $supplier->alamat ?? '-' }}</td>
-                                <td class="py-4 text-center">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-50 text-red-700 border border-red-100">
-                                        {{ number_format($supplier->total_persen_cacat, 1) }}%
-                                    </span>
-                                </td>
-                                <td class="py-4 text-center">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-50 text-amber-700 border border-amber-100">
-                                        {{ number_format($supplier->total_persen_keterlambatan, 1) }}%
-                                    </span>
-                                </td>
-                                <td class="py-4 text-center text-slate-700 font-semibold">
-                                    {{ number_format($supplier->mean_hari_keterlambatan, 1) }} hari
+                                <td class="py-4 text-center text-slate-600 text-xs">
+                                    @if($supplier->lama_kerja_sama)
+                                        {{ $supplier->lama_kerja_sama }} tahun
+                                    @else
+                                        -
+                                    @endif
                                 </td>
                                 <td class="py-4 text-right">
                                     <div class="flex items-center justify-end gap-2">
