@@ -81,7 +81,7 @@ class AhpController extends Controller
         $kriteriaIds = $kriterias->pluck('id')->toArray();
 
         DB::transaction(function () use ($request, $kriteriaIds) {
-            PenilaianKriteria::truncate();
+            PenilaianKriteria::query()->delete();
             foreach ($request->nilai as $aId => $bGroup) {
                 foreach ($bGroup as $bId => $val) {
                     if (in_array($aId, $kriteriaIds) && in_array($bId, $kriteriaIds)) {
@@ -169,7 +169,7 @@ class AhpController extends Controller
         ]);
 
         DB::transaction(function () use ($request) {
-            PenilaianSubkriteria::truncate();
+            PenilaianSubkriteria::query()->delete();
             foreach ($request->nilai as $kriteriaId => $aGroup) {
                 foreach ($aGroup as $aId => $bGroup) {
                     foreach ($bGroup as $bId => $val) {
@@ -284,7 +284,8 @@ class AhpController extends Controller
         // Store in session so supplierForm can filter by these suppliers
         session(['ahp_selected_suppliers' => $supplierIds]);
 
-        return redirect()->route('supervisor.ahp.supplier');
+        return redirect()->route('supervisor.ahp.kriteria')
+            ->with('success', 'Alternatif produk berhasil dipilih. Lanjutkan dengan perbandingan kriteria.');
     }
 
     /**
@@ -349,7 +350,7 @@ class AhpController extends Controller
         ]);
 
         DB::transaction(function () use ($request) {
-            PenilaianSupplier::truncate();
+            PenilaianSupplier::query()->delete();
             foreach ($request->nilai as $subkriteriaId => $aGroup) {
                 foreach ($aGroup as $aId => $bGroup) {
                     foreach ($bGroup as $bId => $val) {
@@ -397,7 +398,9 @@ class AhpController extends Controller
         }
 
         // Run full AHP ranking service to calculate and persist final results!
-        $this->rankingService->computeRanking();
+        // Only rank the suppliers whose products were selected as alternatives (Req 10.5)
+        $selectedSupplierIds = session('ahp_selected_suppliers');
+        $this->rankingService->computeRanking($selectedSupplierIds);
 
         return redirect()->route('supervisor.ahp.hasil')
             ->with('success', 'Perbandingan supplier berhasil disimpan dan konsisten. Perhitungan ranking AHP selesai!');

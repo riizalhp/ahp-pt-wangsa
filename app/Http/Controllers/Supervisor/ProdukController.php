@@ -44,7 +44,31 @@ class ProdukController extends Controller
      */
     public function store(ProdukRequest $request)
     {
-        Produk::create($request->validated());
+        $data = $request->validated();
+        
+        // Auto-generate kode if not provided
+        if (empty($data['kode'])) {
+            $data['kode'] = 'P' . str_pad(Produk::count() + 1, 4, '0', STR_PAD_LEFT);
+        }
+        
+        // Combine dimensions if provided separately
+        if (!empty($data['panjang']) || !empty($data['lebar']) || !empty($data['tinggi'])) {
+            $dimensions = [];
+            if (!empty($data['panjang'])) $dimensions[] = $data['panjang'];
+            if (!empty($data['lebar'])) $dimensions[] = $data['lebar'];
+            if (!empty($data['tinggi'])) $dimensions[] = $data['tinggi'];
+            $data['ukuran'] = implode(' × ', $dimensions);
+        }
+        
+        // Combine capacity with unit
+        if (!empty($data['kapasitas_nilai']) && !empty($data['kapasitas_satuan'])) {
+            $data['kapasitas_pasokan'] = $data['kapasitas_nilai'] . ' ' . $data['kapasitas_satuan'];
+        }
+        
+        // Remove temporary fields
+        unset($data['panjang'], $data['lebar'], $data['tinggi'], $data['kapasitas_nilai'], $data['kapasitas_satuan']);
+
+        Produk::create($data);
 
         return redirect()->route('supervisor.produk.index')
             ->with('success', 'Produk berhasil ditambahkan.');
@@ -67,7 +91,31 @@ class ProdukController extends Controller
      */
     public function update(ProdukRequest $request, Produk $produk)
     {
-        $produk->update($request->validated());
+        $data = $request->validated();
+        
+        // Auto-generate kode if not provided
+        if (empty($data['kode'])) {
+            $data['kode'] = 'P' . str_pad($produk->id, 4, '0', STR_PAD_LEFT);
+        }
+        
+        // Combine dimensions if provided separately
+        if (!empty($data['panjang']) || !empty($data['lebar']) || !empty($data['tinggi'])) {
+            $dimensions = [];
+            if (!empty($data['panjang'])) $dimensions[] = $data['panjang'];
+            if (!empty($data['lebar'])) $dimensions[] = $data['lebar'];
+            if (!empty($data['tinggi'])) $dimensions[] = $data['tinggi'];
+            $data['ukuran'] = implode(' × ', $dimensions);
+        }
+        
+        // Combine capacity with unit
+        if (!empty($data['kapasitas_nilai']) && !empty($data['kapasitas_satuan'])) {
+            $data['kapasitas_pasokan'] = $data['kapasitas_nilai'] . ' ' . $data['kapasitas_satuan'];
+        }
+        
+        // Remove temporary fields
+        unset($data['panjang'], $data['lebar'], $data['tinggi'], $data['kapasitas_nilai'], $data['kapasitas_satuan']);
+
+        $produk->update($data);
 
         return redirect()->route('supervisor.produk.index')
             ->with('success', 'Produk berhasil diperbarui.');

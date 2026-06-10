@@ -53,21 +53,50 @@
                 </div>
 
                 <!-- Ukuran -->
-                <div>
-                    <label for="ukuran" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Ukuran</label>
-                    <input type="text" name="ukuran" id="ukuran" value="{{ old('ukuran') }}"
-                           class="block w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium"
-                           placeholder="Contoh: 79x109">
-                    @error('ukuran') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Ukuran <span class="font-normal normal-case text-slate-400">(opsional)</span></label>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div>
+                            <input type="text" name="panjang" id="panjang" value="{{ old('panjang') }}"
+                                   class="block w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium text-center"
+                                   placeholder="Panjang">
+                            <span class="block text-[10px] text-slate-400 text-center mt-1 font-semibold uppercase tracking-wide">Panjang</span>
+                        </div>
+                        <div>
+                            <input type="text" name="lebar" id="lebar" value="{{ old('lebar') }}"
+                                   class="block w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium text-center"
+                                   placeholder="Lebar">
+                            <span class="block text-[10px] text-slate-400 text-center mt-1 font-semibold uppercase tracking-wide">Lebar</span>
+                        </div>
+                        <div>
+                            <input type="text" name="tinggi" id="tinggi" value="{{ old('tinggi') }}"
+                                   class="block w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium text-center"
+                                   placeholder="Tinggi">
+                            <span class="block text-[10px] text-slate-400 text-center mt-1 font-semibold uppercase tracking-wide">Tinggi</span>
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-2">Isi Panjang × Lebar saja, atau Panjang × Lebar × Tinggi sesuai bentuk item.</p>
+                    @error('panjang') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                    @error('lebar') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                    @error('tinggi') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                 </div>
 
                 <!-- Kapasitas Pasokan -->
-                <div>
-                    <label for="kapasitas_pasokan" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Kapasitas Pasokan</label>
-                    <input type="text" name="kapasitas_pasokan" id="kapasitas_pasokan" value="{{ old('kapasitas_pasokan') }}"
-                           class="block w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium"
-                           placeholder="Contoh: 25-100 ton/minggu">
-                    @error('kapasitas_pasokan') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                <div class="sm:col-span-2">
+                    <label for="kapasitas_nilai" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Kapasitas Pasokan</label>
+                    <div class="flex gap-3">
+                        <input type="number" step="any" min="0" name="kapasitas_nilai" id="kapasitas_nilai" value="{{ old('kapasitas_nilai') }}"
+                               class="block flex-1 px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium"
+                               placeholder="Contoh: 100">
+                        <select name="kapasitas_satuan" id="kapasitas_satuan"
+                                class="w-40 px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium">
+                            @foreach(['kg', 'gram', 'ton', 'kuintal', 'lembar', 'rim', 'pcs', 'roll'] as $satuan)
+                                <option value="{{ $satuan }}" {{ old('kapasitas_satuan') == $satuan ? 'selected' : '' }}>{{ $satuan }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @error('kapasitas_nilai') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                    @error('kapasitas_satuan') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                 </div>
             </div>
 

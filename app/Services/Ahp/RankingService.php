@@ -23,13 +23,18 @@ class RankingService
     /**
      * Compute ranking and persist results.
      *
+     * @param array|null $onlySupplierIds When provided, only these suppliers are ranked.
      * @return array Array of HasilAhp records
      */
-    public function computeRanking(): array
+    public function computeRanking(?array $onlySupplierIds = null): array
     {
-        return DB::transaction(function () {
+        return DB::transaction(function () use ($onlySupplierIds) {
             // 1. Get all suppliers, kriteria, and subkriteria
-            $suppliers = Supplier::all();
+            $suppliersQuery = Supplier::query();
+            if (!empty($onlySupplierIds)) {
+                $suppliersQuery->whereIn('id', $onlySupplierIds);
+            }
+            $suppliers = $suppliersQuery->get();
             $kriterias = Kriteria::all();
             $subkriterias = Subkriteria::all();
 
@@ -38,7 +43,7 @@ class RankingService
 
             if ($numSuppliers === 0 || $numKriterias === 0) {
                 // Clear existing rankings
-                HasilAhp::truncate();
+                HasilAhp::query()->delete();
                 return [];
             }
 
@@ -111,7 +116,7 @@ class RankingService
             arsort($finalScores);
 
             // 7. Clear old results and insert new ones
-            HasilAhp::truncate();
+            HasilAhp::query()->delete();
 
             $rank = 1;
             $results = [];

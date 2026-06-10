@@ -85,7 +85,7 @@
                     <tbody class="divide-y divide-slate-100">
                         @foreach($completedHeaders as $header)
                             @php
-                                {{-- Use the latest actual arrival date among all detail items as the completion date --}}
+                                // Use the latest actual arrival date among all detail items as the completion date
                                 $tanggalSelesai = $header->detail
                                     ->filter(fn($d) => !is_null($d->tanggal_kedatangan_aktual))
                                     ->max('tanggal_kedatangan_aktual');

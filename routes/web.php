@@ -59,6 +59,7 @@ Route::middleware('auth')->group(function () {
         // Logistik and Sales cannot access this route — EnsureRole aborts 403 if they attempt direct access.
         Route::get('/laporan/kinerja', [SupervisorLaporan::class, 'kinerja'])->name('laporan.kinerja');
         Route::get('/laporan/penilaian/pdf', [SupervisorLaporan::class, 'penilaianPdf'])->name('laporan.penilaian.pdf');
+        Route::get('/laporan/penilaian/cetak', [SupervisorLaporan::class, 'penilaianCetak'])->name('laporan.penilaian.cetak');
         Route::get('/laporan/penilaian', [SupervisorLaporan::class, 'penilaian'])->name('laporan.penilaian');
         Route::get('/laporan/pengadaan', [SupervisorLaporan::class, 'pengadaan'])->name('laporan.pengadaan');
         Route::get('/laporan/riwayat/{id}', [SupervisorLaporan::class, 'riwayatDetail'])->name('laporan.riwayat.detail');

@@ -33,6 +33,25 @@ class LaporanController extends Controller
         return $pdfService->generatePdf();
     }
 
+    /**
+     * Tampilkan versi cetak (print-friendly) yang otomatis memicu
+     * dialog print browser (seperti Ctrl + P) sehingga user bisa
+     * menyimpan sebagai PDF langsung dari browser.
+     */
+    public function penilaianCetak(PenilaianPdfService $pdfService)
+    {
+        if (!$pdfService->hasRanking()) {
+            return redirect()
+                ->route('supervisor.laporan.penilaian')
+                ->with('error', 'Belum ada hasil penilaian. Jalankan perhitungan AHP terlebih dahulu.');
+        }
+
+        $rankings    = $pdfService->getRankings();
+        $companyName = 'PT Wangsa Jatra Lestari';
+
+        return view('laporan.penilaian_cetak', compact('rankings', 'companyName'));
+    }
+
     public function kinerja()
     {
         $suppliers = $this->metricsService->suppliersWithPerformance();
