@@ -29,6 +29,7 @@ class PurchaseOrderRequest extends FormRequest
             'tanggal_po'                   => 'required|date',
             'tanggal_kedatangan_target'    => 'required|date|after_or_equal:tanggal_po',
             'catatan'                      => 'nullable|string',
+            'foto'                         => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
             'items'                        => 'required|array|min:1',
             'items.*.produk_id'            => 'required|exists:data_produk,id',
             'items.*.jumlah_dipesan'       => 'required|numeric|gt:0|max:99999.99',
@@ -46,6 +47,9 @@ class PurchaseOrderRequest extends FormRequest
         return [
             'no_po.unique'                         => 'Nomor PO sudah digunakan.',
             'tanggal_kedatangan_target.after_or_equal' => 'Tanggal kedatangan tidak boleh sebelum tanggal PO.',
+            'foto.image'                           => 'File harus berupa gambar.',
+            'foto.mimes'                           => 'Format foto harus: JPG, JPEG, atau PNG.',
+            'foto.max'                             => 'Ukuran foto maksimal 2MB.',
             'items.required'                       => 'Minimal satu produk harus ditambahkan.',
             'items.min'                            => 'Minimal satu produk harus ditambahkan.',
             'items.*.produk_id.required'           => 'Produk wajib dipilih.',

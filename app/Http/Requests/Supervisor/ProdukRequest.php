@@ -27,7 +27,7 @@ class ProdukRequest extends FormRequest
             'supplier_id'       => 'required|exists:data_supplier,id',
             'nama'              => 'required|string|max:255',
             'jenis_produk'      => 'nullable|string|max:150',
-            'merk'              => 'nullable|string|max:100',
+            'merk'              => 'required|string|max:100',
             'ukuran'            => 'nullable|string|max:100',
             'panjang'           => 'nullable|string|max:50',
             'lebar'             => 'nullable|string|max:50',

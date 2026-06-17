@@ -18,6 +18,7 @@ class PengadaanDetail extends Model
         'tanggal_kedatangan_aktual',
         'persen_kualitas_item',
         'hari_keterlambatan',
+        'foto',
     ];
 
     protected $casts = [

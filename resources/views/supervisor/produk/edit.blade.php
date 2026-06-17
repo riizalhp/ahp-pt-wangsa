@@ -46,8 +46,8 @@
 
                 <!-- Merk -->
                 <div>
-                    <label for="merk" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Merk</label>
-                    <input type="text" name="merk" id="merk" value="{{ old('merk', $produk->merk) }}"
+                    <label for="merk" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Merk <span class="text-red-500">*</span></label>
+                    <input type="text" name="merk" id="merk" required value="{{ old('merk', $produk->merk) }}"
                            class="block w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium"
                            placeholder="Contoh: Hansol">
                     @error('merk') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
@@ -55,9 +55,16 @@
 
                 <!-- Ukuran -->
                 @php
-                    $ukuranParts = preg_split('/\s*[×x]\s*/i', $produk->ukuran ?? '');
-                    $oldPanjang = old('panjang', $ukuranParts[0] ?? '');
-                    $oldLebar = old('lebar', $ukuranParts[1] ?? '');
+                    // Parse ukuran safely - split by × or x
+                    // New order: Lebar x Panjang x Tinggi (index 0=lebar, 1=panjang, 2=tinggi)
+                    $ukuranParts = [];
+                    if (!empty($produk->ukuran)) {
+                        $ukuranParts = preg_split('/\s*[×x]\s*/ui', trim($produk->ukuran));
+                    }
+                    
+                    // Assign to correct fields: index 0=lebar, 1=panjang, 2=tinggi
+                    $oldLebar = old('lebar', $ukuranParts[0] ?? '');
+                    $oldPanjang = old('panjang', $ukuranParts[1] ?? '');
                     $oldTinggi = old('tinggi', $ukuranParts[2] ?? '');
 
                     $kapSatuanList = ['kg', 'gram', 'ton', 'kuintal', 'lembar', 'rim', 'pcs', 'roll'];
@@ -73,30 +80,27 @@
                     $oldKapSatuan = old('kapasitas_satuan', $kapSatuan);
                 @endphp
                 <div class="sm:col-span-2">
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Ukuran <span class="font-normal normal-case text-slate-400">(opsional)</span></label>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Ukuran</label>
                     <div class="grid grid-cols-3 gap-3">
-                        <div>
-                            <input type="text" name="panjang" id="panjang" value="{{ $oldPanjang }}"
-                                   class="block w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium text-center"
-                                   placeholder="Panjang">
-                            <span class="block text-[10px] text-slate-400 text-center mt-1 font-semibold uppercase tracking-wide">Panjang</span>
-                        </div>
                         <div>
                             <input type="text" name="lebar" id="lebar" value="{{ $oldLebar }}"
                                    class="block w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium text-center"
-                                   placeholder="Lebar">
-                            <span class="block text-[10px] text-slate-400 text-center mt-1 font-semibold uppercase tracking-wide">Lebar</span>
+                                   placeholder="">
+                        </div>
+                        <div>
+                            <input type="text" name="panjang" id="panjang" value="{{ $oldPanjang }}"
+                                   class="block w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium text-center"
+                                   placeholder="">
                         </div>
                         <div>
                             <input type="text" name="tinggi" id="tinggi" value="{{ $oldTinggi }}"
                                    class="block w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium text-center"
-                                   placeholder="Tinggi">
-                            <span class="block text-[10px] text-slate-400 text-center mt-1 font-semibold uppercase tracking-wide">Tinggi</span>
+                                   placeholder="">
                         </div>
                     </div>
-                    <p class="text-[11px] text-slate-400 mt-2">Isi Panjang × Lebar saja, atau Panjang × Lebar × Tinggi sesuai bentuk item.</p>
-                    @error('panjang') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                    <p class="text-[11px] text-slate-400 mt-2">Isi lebar x panjang untuk item kertas dan kardus atau panjang x lebar x tinggi sesuai jenis item.</p>
                     @error('lebar') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                    @error('panjang') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                     @error('tinggi') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                 </div>
 

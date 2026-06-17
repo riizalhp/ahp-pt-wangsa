@@ -85,6 +85,8 @@
                             <th class="pb-4 pr-4 w-8">No.</th>
                             <th class="pb-4 pr-4">Produk</th>
                             <th class="pb-4 pr-4">Jenis Produk</th>
+                            <th class="pb-4 pr-4">Merk</th>
+                            <th class="pb-4 pr-4">Ukuran</th>
                             <th class="pb-4 pr-4 text-right">Jumlah Dipesan</th>
                             <th class="pb-4 pr-4">Satuan</th>
                             <th class="pb-4 pr-4 text-right">Jumlah Diterima Baik</th>
@@ -109,6 +111,12 @@
                                     @else
                                         <span class="text-slate-300 italic text-xs">—</span>
                                     @endif
+                                </td>
+                                <td class="py-4 pr-4 text-slate-600 text-xs">
+                                    {{ $detail->produk->merk ?? '-' }}
+                                </td>
+                                <td class="py-4 pr-4 text-slate-500 text-xs">
+                                    {{ $detail->produk->ukuran ?? '-' }}
                                 </td>
                                 <td class="py-4 pr-4 text-right font-semibold text-slate-700">
                                     {{ number_format($detail->jumlah_dipesan, 2) }}

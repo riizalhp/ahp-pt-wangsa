@@ -56,13 +56,25 @@
                         <tbody class="divide-y divide-slate-100 text-sm">
                             @foreach($pendingDeliveries as $po)
                                 <tr>
-                                    <td class="py-3 font-semibold text-slate-600">#{{ $po->id }}</td>
+                                    <td class="py-3 font-semibold text-slate-600">{{ $po->no_po }}</td>
                                     <td class="py-3 font-bold text-slate-800">{{ $po->supplier->nama }}</td>
-                                    <td class="py-3 font-medium text-slate-700">{{ $po->produk->nama }}</td>
-                                    <td class="py-3 text-slate-600">{{ number_format($po->jumlah_dibeli) }} {{ $po->produk->satuan }}</td>
+                                    <td class="py-3 font-medium text-slate-700">
+                                        @if($po->detail->count() == 1)
+                                            {{ $po->detail->first()->produk->nama }}
+                                        @else
+                                            {{ $po->detail->count() }} item
+                                        @endif
+                                    </td>
+                                    <td class="py-3 text-slate-600">
+                                        @if($po->detail->count() == 1)
+                                            {{ number_format($po->detail->first()->jumlah_dipesan, 2) }} {{ $po->detail->first()->satuan }}
+                                        @else
+                                            Multi item
+                                        @endif
+                                    </td>
                                     <td class="py-3 text-slate-500">{{ $po->tanggal_po->isoFormat('D MMMM Y') }}</td>
                                     <td class="py-3 text-right">
-                                        <a href="{{ route('logistik.aktual.edit', $po->id) }}" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-teal text-white text-xs font-bold hover:bg-teal-dark shadow-sm transition-colors">
+                                        <a href="{{ route('logistik.penerimaan.edit', $po->id) }}" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-teal text-white text-xs font-bold hover:bg-teal-dark shadow-sm transition-colors">
                                             <i class="fas fa-clipboard-list"></i> Terima Aktual
                                         </a>
                                     </td>

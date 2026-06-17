@@ -123,15 +123,15 @@ class PerformanceCalculator
     }
 
     /**
-     * Supplier mean lateness expressed per Purchase Order.
+     * Supplier mean lateness across all received items.
      *
      * Mean_Hari_Keterlambatan =
-     *   sum(Hari_Keterlambatan over received items)
-     *   / count(distinct Pengadaan_ID having at least one received item).
+     *   sum(Hari_Keterlambatan over all received items)
+     *   / count(all received items).
      *
-     * The divisor is the count of distinct Purchase Orders, not the count of
-     * line items (Req 8.2): when several items share a Pengadaan_ID the divisor
-     * stays below the item count. Returns 0.0 when the list is empty.
+     * The divisor is the count of ALL received line items (detail produk),
+     * NOT the count of distinct Purchase Orders.
+     * Returns 0.0 when the list is empty.
      *
      * Requirements 8.1, 8.2, 8.3.
      *
@@ -141,19 +141,18 @@ class PerformanceCalculator
      */
     public function meanHariKeterlambatan(array $receivedItems): float
     {
-        if (count($receivedItems) === 0) {
+        $totalItems = count($receivedItems);
+        
+        if ($totalItems === 0) {
             return 0.0;
         }
 
         $sumHari = 0;
-        $distinctPo = [];
-
         foreach ($receivedItems as $item) {
             $sumHari += (int) ($item['hari_keterlambatan'] ?? 0);
-            $distinctPo[(int) ($item['pengadaan_id'] ?? 0)] = true;
         }
 
-        return $this->safeDivide((float) $sumHari, (float) count($distinctPo));
+        return $this->safeDivide((float) $sumHari, (float) $totalItems);
     }
 
     /**

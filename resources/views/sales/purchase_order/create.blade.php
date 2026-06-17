@@ -23,7 +23,7 @@
         </div>
     @endif
 
-    <form action="{{ route('sales.purchase_order.store') }}" method="POST"
+    <form action="{{ route('sales.purchase_order.store') }}" method="POST" enctype="multipart/form-data"
           x-data="{
               items: {{ old('items') ? json_encode(old('items')) : '[{produk_id: \'\', jumlah_dipesan: \'\', satuan: \'\'}]' }},
               satuanList: @js($satuanList),
@@ -119,6 +119,20 @@
                               placeholder="Instruksi khusus atau catatan untuk supplier..."
                               class="block w-full px-4 py-2.5 rounded-xl border @error('catatan') border-red-400 bg-red-50 @else border-slate-200 bg-slate-50 @enderror focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium resize-none">{{ old('catatan') }}</textarea>
                     @error('catatan')
+                        <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                {{-- Foto --}}
+                <div class="sm:col-span-2">
+                    <label for="foto"
+                           class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                        Foto Lampiran <span class="text-slate-400 font-normal normal-case">(opsional)</span>
+                    </label>
+                    <input type="file" name="foto" id="foto" accept="image/jpeg,image/jpg,image/png"
+                           class="block w-full text-sm text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100 cursor-pointer border @error('foto') border-red-400 bg-red-50 @else border-slate-200 @enderror rounded-xl focus:outline-none focus:border-teal">
+                    <p class="mt-1 text-xs text-slate-400">Format: JPG, JPEG, PNG. Maksimal 2MB.</p>
+                    @error('foto')
                         <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                     @enderror
                 </div>

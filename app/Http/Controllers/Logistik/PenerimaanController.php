@@ -111,12 +111,24 @@ class PenerimaanController extends Controller
                     (float) $detail->jumlah_dipesan
                 );
 
+                // Handle photo upload
+                $fotoPath = $detail->foto; // Keep existing photo if no new upload
+                if (isset($item['foto']) && $item['foto']) {
+                    // Delete old photo if exists
+                    if ($detail->foto && \Storage::disk('public')->exists($detail->foto)) {
+                        \Storage::disk('public')->delete($detail->foto);
+                    }
+                    // Store new photo
+                    $fotoPath = $item['foto']->store('penerimaan', 'public');
+                }
+
                 // Req 4.2, 5.4 — persist receiving values and computed metrics
                 $detail->update([
                     'jumlah_diterima_baik'      => $diterima,
                     'tanggal_kedatangan_aktual' => $aktual,
                     'persen_kualitas_item'       => $persenKualitas,
                     'hari_keterlambatan'         => $hariKeterlambatan,
+                    'foto'                       => $fotoPath,
                 ]);
             }
         });

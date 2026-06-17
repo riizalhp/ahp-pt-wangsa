@@ -81,6 +81,12 @@
                 <i class="w-5 fas fa-file-invoice-dollar text-sm mr-2 {{ request()->routeIs('sales.purchase_order.*') ? 'text-white' : 'text-slate-500' }}"></i>
                 Purchase Order
             </a>
+            
+            <p class="px-3 pt-4 mb-2 text-[10px] font-bold text-slate-500 tracking-wider uppercase">Laporan</p>
+            <a href="{{ route('sales.laporan.penilaian') }}" class="flex items-center px-3 py-2.5 text-xs font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('sales.laporan.penilaian') ? 'bg-teal text-white shadow-md shadow-teal/15 font-semibold' : 'text-slate-400 hover:bg-slate-800/60 hover:text-white' }}">
+                <i class="w-5 fas fa-file-invoice text-sm mr-2 {{ request()->routeIs('sales.laporan.penilaian') ? 'text-white' : 'text-slate-500' }}"></i>
+                Hasil Penilaian AHP
+            </a>
         @elseif(auth()->user()?->role === 'logistik')
             <!-- LOGISTIK MENU -->
             <p class="px-3 mb-2 text-[10px] font-bold text-slate-500 tracking-wider uppercase">Menu Utama</p>

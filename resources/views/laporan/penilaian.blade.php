@@ -47,11 +47,16 @@
                                     <th class="pb-3">Peringkat</th>
                                     <th class="pb-3">Kode</th>
                                     <th class="pb-3">Nama Supplier</th>
+                                    <th class="pb-3">Produk</th>
                                     <th class="pb-3 text-right">Skor Akhir (AHP)</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 text-sm font-medium">
                                 @foreach($rankings as $rank)
+                                    @php
+                                        // Get products from this supplier
+                                        $products = $rank->supplier->produk->take(3);
+                                    @endphp
                                     <tr class="hover:bg-slate-50/40">
                                         <td class="py-3.5">
                                             <span class="inline-flex items-center justify-center w-7 h-7 rounded-xl font-extrabold text-xs
@@ -66,6 +71,29 @@
                                                 <span class="ml-2 inline-flex items-center gap-0.5 px-2 py-0.5 rounded text-[9px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
                                                     <i class="fas fa-crown text-[8px]"></i> Rekomendasi
                                                 </span>
+                                            @endif
+                                        </td>
+                                        <td class="py-3.5 text-xs text-slate-600">
+                                            @if($products->isEmpty())
+                                                <span class="italic text-slate-400">Belum ada produk</span>
+                                            @else
+                                                @foreach($products as $product)
+                                                    <div class="mb-1">
+                                                        <span class="font-semibold text-slate-700">{{ $product->nama }}</span>
+                                                        @if($product->merk || $product->ukuran)
+                                                            <span class="text-slate-400"> • </span>
+                                                        @endif
+                                                        @if($product->merk)
+                                                            <span class="text-slate-500">{{ $product->merk }}</span>
+                                                        @endif
+                                                        @if($product->ukuran)
+                                                            <span class="text-slate-400"> ({{ $product->ukuran }})</span>
+                                                        @endif
+                                                    </div>
+                                                @endforeach
+                                                @if($rank->supplier->produk->count() > 3)
+                                                    <span class="text-slate-400 italic text-[10px]">+{{ $rank->supplier->produk->count() - 3 }} produk lainnya</span>
+                                                @endif
                                             @endif
                                         </td>
                                         <td class="py-3.5 text-right font-extrabold text-teal">

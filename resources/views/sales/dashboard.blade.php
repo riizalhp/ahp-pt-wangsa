@@ -39,7 +39,7 @@
     <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden mt-8">
         <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
             <h3 class="text-sm font-bold text-slate-800 tracking-wide">5 Purchase Order Terakhir</h3>
-            <a href="{{ route('sales.pengadaan.create') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal text-white text-xs font-bold hover:bg-teal-dark shadow-sm transition-colors">
+            <a href="{{ route('sales.purchase_order.create') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal text-white text-xs font-bold hover:bg-teal-dark shadow-sm transition-colors">
                 <i class="fas fa-plus"></i> PO Baru
             </a>
         </div>
@@ -58,28 +58,46 @@
                             <tr class="text-left text-xs font-bold text-slate-400 uppercase tracking-wider">
                                 <th class="pb-3">No. PO</th>
                                 <th class="pb-3">Supplier</th>
-                                <th class="pb-3">Produk</th>
-                                <th class="pb-3">Jumlah Dibeli</th>
+                                <th class="pb-3">Jumlah Item</th>
                                 <th class="pb-3">Tanggal PO</th>
+                                <th class="pb-3">Target Kedatangan</th>
                                 <th class="pb-3 text-right">Status</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 text-sm">
                             @foreach($latestPos as $po)
+                                @php
+                                    $allReceived = $po->detail->every(fn($d) => !is_null($d->jumlah_diterima_baik));
+                                    $someReceived = $po->detail->contains(fn($d) => !is_null($d->jumlah_diterima_baik));
+                                @endphp
                                 <tr>
-                                    <td class="py-3 font-semibold text-slate-600">#{{ $po->id }}</td>
+                                    <td class="py-3 font-semibold text-slate-600">{{ $po->no_po }}</td>
                                     <td class="py-3 font-bold text-slate-800">{{ $po->supplier->nama }}</td>
-                                    <td class="py-3 font-medium text-slate-700">{{ $po->produk->nama }}</td>
-                                    <td class="py-3 text-slate-600">{{ number_format($po->jumlah_dibeli) }} {{ $po->produk->satuan }}</td>
+                                    <td class="py-3 text-slate-600">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-slate-100 text-slate-600">
+                                            {{ $po->detail->count() }} item
+                                        </span>
+                                    </td>
                                     <td class="py-3 text-slate-500">{{ $po->tanggal_po->isoFormat('D MMMM Y') }}</td>
+                                    <td class="py-3 text-slate-500">
+                                        @if($po->tanggal_kedatangan_target)
+                                            {{ $po->tanggal_kedatangan_target->isoFormat('D MMM Y') }}
+                                        @else
+                                            <span class="italic text-slate-400">—</span>
+                                        @endif
+                                    </td>
                                     <td class="py-3 text-right">
-                                        @if($po->tanggal_kedatangan)
+                                        @if($allReceived)
                                             <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-teal-50 text-teal-dark border border-teal-100">
-                                                Diterima
+                                                Diterima Semua
+                                            </span>
+                                        @elseif($someReceived)
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-100">
+                                                Diterima Sebagian
                                             </span>
                                         @else
                                             <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-50 text-amber-700 border border-amber-100">
-                                                Dikirim/Pending
+                                                Menunggu
                                             </span>
                                         @endif
                                     </td>

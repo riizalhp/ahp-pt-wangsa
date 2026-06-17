@@ -68,8 +68,11 @@
                             <th class="pb-3 pr-4">No</th>
                             <th class="pb-3 pr-4">Produk</th>
                             <th class="pb-3 pr-4">Jenis Produk</th>
+                            <th class="pb-3 pr-4">Merk</th>
+                            <th class="pb-3 pr-4">Ukuran</th>
                             <th class="pb-3 pr-4 text-right">Jumlah Dipesan</th>
-                            <th class="pb-3">Satuan</th>
+                            <th class="pb-3 pr-4">Satuan</th>
+                            <th class="pb-3">Tanggal Diterima</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 font-medium text-slate-700">
@@ -80,13 +83,30 @@
                                     {{ $item->produk->nama ?? '-' }}
                                 </td>
                                 <td class="py-3 pr-4 text-slate-600">
-                                    {{ $item->produk->jenis ?? '-' }}
+                                    {{ $item->produk->jenis_produk ?? '-' }}
+                                </td>
+                                <td class="py-3 pr-4 text-slate-600">
+                                    {{ $item->produk->merk ?? '-' }}
+                                </td>
+                                <td class="py-3 pr-4 text-slate-500 text-xs">
+                                    {{ $item->produk->ukuran ?? '-' }}
                                 </td>
                                 <td class="py-3 pr-4 text-right font-semibold text-slate-700">
                                     {{ number_format((float) $item->jumlah_dipesan, 2) }}
                                 </td>
-                                <td class="py-3 text-slate-500">
+                                <td class="py-3 pr-4 text-slate-500">
                                     {{ $item->satuan }}
+                                </td>
+                                <td class="py-3">
+                                    @if($item->tanggal_kedatangan_aktual)
+                                        <span class="text-xs text-slate-700">
+                                            {{ $item->tanggal_kedatangan_aktual->isoFormat('D MMM Y') }}
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-50 text-amber-700 border border-amber-100">
+                                            Belum diterima
+                                        </span>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

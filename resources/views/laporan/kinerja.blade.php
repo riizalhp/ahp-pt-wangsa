@@ -1,6 +1,16 @@
 <x-layouts.app title="Kinerja Supplier">
     <div class="flex items-center justify-between mb-6">
-        <p class="text-xs text-slate-500 font-medium">Halaman untuk memantau metrik kinerja supplier berdasarkan data penerimaan barang yang telah diinputkan.</p>
+        <div>
+            <p class="text-xs text-slate-500 font-medium">Halaman untuk memantau metrik kinerja supplier berdasarkan data penerimaan barang yang telah diinputkan.</p>
+            <div class="mt-2 p-3 rounded-lg bg-blue-50 border border-blue-100">
+                <div class="flex items-start gap-2">
+                    <i class="fas fa-info-circle text-blue-600 mt-0.5"></i>
+                    <p class="text-xs text-blue-800 leading-relaxed">
+                        <span class="font-bold">Catatan Perhitungan:</span> Persentase Keterlambatan, Persentase Cacat, dan Rata-rata Hari Keterlambatan dihitung secara kumulatif dari seluruh item pada detail Purchase Order (PO) masing-masing supplier.
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Kinerja Supplier Table Card -->

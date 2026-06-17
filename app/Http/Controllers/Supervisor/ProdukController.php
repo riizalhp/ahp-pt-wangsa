@@ -51,11 +51,11 @@ class ProdukController extends Controller
             $data['kode'] = 'P' . str_pad(Produk::count() + 1, 4, '0', STR_PAD_LEFT);
         }
         
-        // Combine dimensions if provided separately
-        if (!empty($data['panjang']) || !empty($data['lebar']) || !empty($data['tinggi'])) {
+        // Combine dimensions if provided separately (order: Lebar x Panjang x Tinggi for paper industry)
+        if (!empty($data['lebar']) || !empty($data['panjang']) || !empty($data['tinggi'])) {
             $dimensions = [];
-            if (!empty($data['panjang'])) $dimensions[] = $data['panjang'];
             if (!empty($data['lebar'])) $dimensions[] = $data['lebar'];
+            if (!empty($data['panjang'])) $dimensions[] = $data['panjang'];
             if (!empty($data['tinggi'])) $dimensions[] = $data['tinggi'];
             $data['ukuran'] = implode(' × ', $dimensions);
         }
@@ -98,11 +98,11 @@ class ProdukController extends Controller
             $data['kode'] = 'P' . str_pad($produk->id, 4, '0', STR_PAD_LEFT);
         }
         
-        // Combine dimensions if provided separately
-        if (!empty($data['panjang']) || !empty($data['lebar']) || !empty($data['tinggi'])) {
+        // Combine dimensions if provided separately (order: Lebar x Panjang x Tinggi for paper industry)
+        if (!empty($data['lebar']) || !empty($data['panjang']) || !empty($data['tinggi'])) {
             $dimensions = [];
-            if (!empty($data['panjang'])) $dimensions[] = $data['panjang'];
             if (!empty($data['lebar'])) $dimensions[] = $data['lebar'];
+            if (!empty($data['panjang'])) $dimensions[] = $data['panjang'];
             if (!empty($data['tinggi'])) $dimensions[] = $data['tinggi'];
             $data['ukuran'] = implode(' × ', $dimensions);
         }

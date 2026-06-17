@@ -58,7 +58,7 @@
     @endif
 
     <!-- Line Items Reception Form -->
-    <form action="{{ route('logistik.penerimaan.update', $penerimaan->id) }}" method="POST">
+    <form action="{{ route('logistik.penerimaan.update', $penerimaan->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -130,6 +130,42 @@
                                 class="block w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium @error('items.' . $detail->id . '.tanggal_kedatangan_aktual') border-red-400 bg-red-50 @enderror"
                             >
                             @error('items.' . $detail->id . '.tanggal_kedatangan_aktual')
+                                <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- Foto Penerimaan -->
+                        <div class="sm:col-span-2">
+                            <label for="foto_{{ $detail->id }}"
+                                   class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                                Foto Penerimaan <span class="text-slate-400 font-normal">(Opsional)</span>
+                            </label>
+                            
+                            @if($detail->foto)
+                                <div class="mb-3 p-3 rounded-lg bg-slate-50 border border-slate-200">
+                                    <div class="flex items-center gap-3">
+                                        <img src="{{ asset('storage/' . $detail->foto) }}" 
+                                             alt="Foto Penerimaan" 
+                                             class="w-20 h-20 object-cover rounded-lg border border-slate-200">
+                                        <div class="flex-1">
+                                            <p class="text-xs font-semibold text-slate-700">Foto saat ini</p>
+                                            <p class="text-[10px] text-slate-500 mt-0.5">Upload foto baru untuk mengganti</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+
+                            <input
+                                type="file"
+                                id="foto_{{ $detail->id }}"
+                                name="items[{{ $detail->id }}][foto]"
+                                accept="image/jpeg,image/jpg,image/png"
+                                class="block w-full text-sm text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100 cursor-pointer border border-slate-200 rounded-xl focus:outline-none focus:border-teal @error('items.' . $detail->id . '.foto') border-red-400 bg-red-50 @enderror"
+                            >
+                            <span class="text-[10px] text-slate-400 mt-1 block">
+                                Format: JPG, JPEG, PNG. Maksimal 2MB.
+                            </span>
+                            @error('items.' . $detail->id . '.foto')
                                 <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
                             @enderror
                         </div>

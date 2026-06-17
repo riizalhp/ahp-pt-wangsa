@@ -40,6 +40,7 @@ class PenerimaanRequest extends FormRequest
             'items'                               => 'required|array|min:1',
             'items.*.jumlah_diterima_baik'        => 'required|numeric|min:0|max:99999.99',
             'items.*.tanggal_kedatangan_aktual'   => 'required|date',
+            'items.*.foto'                        => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
         ];
     }
 
@@ -55,6 +56,9 @@ class PenerimaanRequest extends FormRequest
             'items.*.jumlah_diterima_baik.min'           => 'Jumlah diterima tidak boleh negatif.',
             'items.*.tanggal_kedatangan_aktual.required' => 'Tanggal kedatangan aktual wajib diisi.',
             'items.*.tanggal_kedatangan_aktual.date'     => 'Format tanggal tidak valid.',
+            'items.*.foto.image'                         => 'File harus berupa gambar.',
+            'items.*.foto.mimes'                         => 'Format foto harus: JPG, JPEG, atau PNG.',
+            'items.*.foto.max'                           => 'Ukuran foto maksimal 2MB.',
         ];
     }
 }

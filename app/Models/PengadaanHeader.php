@@ -16,6 +16,7 @@ class PengadaanHeader extends Model
         'tanggal_po',
         'tanggal_kedatangan_target',
         'catatan',
+        'foto',
     ];
 
     protected $casts = [
