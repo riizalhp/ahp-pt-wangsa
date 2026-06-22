@@ -12,18 +12,14 @@
                    class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-teal text-white text-xs font-bold hover:bg-teal-dark shadow-md shadow-teal/15 transition-all">
                     <i class="fas fa-print mr-1"></i> Cetak PDF
                 </a>
-                <button onclick="alert('Laporan penilaian berhasil diajukan ke jajaran manajemen.')" 
-                        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-teal text-white text-xs font-bold hover:bg-teal-dark shadow-md shadow-teal/15 transition-all">
-                    <i class="fas fa-paper-plane"></i> Ajukan Laporan
-                </button>
             </div>
         @endif
     </div>
 
     <!-- Main Grid -->
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <!-- Table (2/3 width) -->
-        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden lg:col-span-2">
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <!-- Table (full width on mobile, 3/5 width on desktop) -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden lg:col-span-1">
             <div class="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
                 <h3 class="text-sm font-bold text-slate-800 tracking-wide">Peringkat Kelayakan Supplier Terpilih</h3>
                 <span class="inline-flex items-center gap-1 text-slate-400 text-xs font-medium">
@@ -108,33 +104,63 @@
             </div>
         </div>
 
-        <!-- Donut Chart: Bobot Kriteria (1/3 width) -->
-        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col h-fit">
-            <div class="px-5 py-4 border-b border-slate-100 bg-slate-50/50">
-                <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Bobot Kriteria AHP</h3>
-            </div>
-            <div class="p-6 flex flex-col items-center justify-center">
-                @if($rankings->isEmpty())
-                    <p class="text-xs text-slate-400 italic">Data belum tersedia.</p>
-                @else
-                    <div class="w-full max-w-[200px] mb-4">
-                        <canvas id="chartBobotKriteriaReport"></canvas>
-                    </div>
-                    
-                    <!-- Table showing weights -->
-                    <div class="w-full border-t border-slate-100 pt-4 space-y-2">
-                        @foreach($kriterias as $index => $k)
-                            <div class="flex items-center justify-between text-xs">
-                                <div class="flex items-center gap-1.5">
-                                    <span class="w-2.5 h-2.5 rounded bg-teal" style="background-color: {{ ['#009688', '#00695C', '#4CAF50', '#FF9800', '#9C27B0'][$index] ?? '#009688' }}"></span>
-                                    <span class="font-bold text-slate-700">[{{ $k->kode }}] {{ $k->nama }}</span>
+        <!-- Charts Column -->
+        <div class="space-y-6">
+            <!-- Donut Chart: Bobot Kriteria -->
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col">
+                <div class="px-5 py-4 border-b border-slate-100 bg-slate-50/50">
+                    <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Bobot Kriteria</h3>
+                </div>
+                <div class="p-6 flex flex-col items-center justify-center">
+                    @if($rankings->isEmpty())
+                        <p class="text-xs text-slate-400 italic">Data belum tersedia.</p>
+                    @else
+                        <div class="w-full max-w-[200px] mb-4">
+                            <canvas id="chartBobotKriteriaReport"></canvas>
+                        </div>
+                        
+                        <!-- Table showing weights -->
+                        <div class="w-full border-t border-slate-100 pt-4 space-y-2">
+                            @foreach($kriterias as $index => $k)
+                                <div class="flex items-center justify-between text-xs">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="w-2.5 h-2.5 rounded bg-teal" style="background-color: {{ ['#009688', '#00695C', '#4CAF50', '#FF9800', '#9C27B0'][$index] ?? '#009688' }}"></span>
+                                        <span class="font-bold text-slate-700">[{{ $k->kode }}] {{ $k->nama }}</span>
+                                    </div>
+                                    <span class="font-bold text-slate-500">{{ number_format(($kriteriaWeights[$k->id] ?? 0) * 100, 2) }}%</span>
                                 </div>
-                                <span class="font-bold text-slate-500">{{ number_format(($kriteriaWeights[$index] ?? 0) * 100, 2) }}%</span>
-                            </div>
-                        @endforeach
-                    </div>
-                @endif
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
             </div>
+
+            <!-- Donut Chart: Bobot Global Subkriteria -->
+            @if(!$rankings->isEmpty() && isset($subkriterias) && isset($globalSubkriteriaWeights))
+                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col">
+                    <div class="px-5 py-4 border-b border-slate-100 bg-slate-50/50">
+                        <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Bobot Global Subkriteria</h3>
+                    </div>
+                    <div class="p-6 flex flex-col items-center justify-center">
+                        <div class="w-full max-w-[200px] mb-4">
+                            <canvas id="chartBobotSubkriteriaReport"></canvas>
+                        </div>
+                        
+                        <!-- Table showing weights -->
+                        <div class="w-full border-t border-slate-100 pt-4 space-y-2 max-h-64 overflow-y-auto">
+                            @foreach($subkriterias as $index => $sk)
+                                <div class="flex items-center justify-between text-xs">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="w-2.5 h-2.5 rounded bg-teal" style="background-color: {{ ['#009688', '#26A69A', '#4DB6AC', '#80CBC4', '#00695C', '#00897B', '#26A69A', '#4CAF50', '#66BB6A', '#81C784', '#FF9800', '#FFA726', '#FFB74D', '#9C27B0', '#AB47BC', '#BA68C8', '#2196F3', '#42A5F5', '#64B5F6', '#E91E63'][$index % 20] ?? '#009688' }}"></span>
+                                        <span class="font-bold text-slate-700">[{{ $sk->kriteria->kode }}{{ $sk->kode }}] {{ $sk->nama }}</span>
+                                    </div>
+                                    <span class="font-bold text-slate-500">{{ number_format(($globalSubkriteriaWeights[$sk->id] ?? 0) * 100, 2) }}%</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 
@@ -142,16 +168,17 @@
     @if(!$rankings->isEmpty())
         <script>
             document.addEventListener('DOMContentLoaded', function() {
+                // Kriteria Chart
                 const kriteriaLabels = {!! json_encode($kriterias->pluck('nama')->toArray()) !!};
-                const kriteriaWeights = {!! json_encode($kriteriaWeights) !!};
+                const kriteriaData = {!! json_encode(array_values($kriteriaWeights)) !!};
                 
-                const ctxDonut = document.getElementById('chartBobotKriteriaReport').getContext('2d');
-                new Chart(ctxDonut, {
+                const ctxKriteria = document.getElementById('chartBobotKriteriaReport').getContext('2d');
+                new Chart(ctxKriteria, {
                     type: 'doughnut',
                     data: {
                         labels: kriteriaLabels,
                         datasets: [{
-                            data: kriteriaWeights,
+                            data: kriteriaData,
                             backgroundColor: [
                                 '#009688', // teal
                                 '#00695C', // teal-dark
@@ -181,6 +208,49 @@
                         cutout: '65%'
                     }
                 });
+
+                @if(isset($subkriterias) && isset($globalSubkriteriaWeights))
+                // Subkriteria Chart
+                const subkriteriaLabels = {!! json_encode($subkriterias->map(function($sk) {
+                    return '[' . $sk->kriteria->kode . $sk->kode . '] ' . $sk->nama;
+                })->toArray()) !!};
+                const subkriteriaData = {!! json_encode(array_values($globalSubkriteriaWeights)) !!};
+                
+                const ctxSubkriteria = document.getElementById('chartBobotSubkriteriaReport').getContext('2d');
+                new Chart(ctxSubkriteria, {
+                    type: 'doughnut',
+                    data: {
+                        labels: subkriteriaLabels,
+                        datasets: [{
+                            data: subkriteriaData,
+                            backgroundColor: [
+                                '#009688', '#26A69A', '#4DB6AC', '#80CBC4', '#00695C', '#00897B', '#26A69A', 
+                                '#4CAF50', '#66BB6A', '#81C784', '#FF9800', '#FFA726', '#FFB74D', 
+                                '#9C27B0', '#AB47BC', '#BA68C8', '#2196F3', '#42A5F5', '#64B5F6', '#E91E63'
+                            ],
+                            borderWidth: 2,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let val = context.raw || 0;
+                                        return context.label + ': ' + (val * 100).toFixed(2) + '%';
+                                    }
+                                }
+                            }
+                        },
+                        cutout: '65%'
+                    }
+                });
+                @endif
             });
         </script>
     @endif

@@ -51,10 +51,34 @@
                                     </span>
                                 </td>
                                 <td class="py-4 text-right">
-                                    <a href="{{ route('sales.purchase_order.show', $header->id) }}"
-                                       class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-teal hover:text-white transition-colors duration-150 text-xs font-bold">
-                                        <i class="fas fa-eye text-[11px]"></i> Detail
-                                    </a>
+                                    <div class="flex items-center justify-end gap-2">
+                                        <a href="{{ route('sales.purchase_order.show', $header->id) }}"
+                                           class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-teal hover:text-white transition-colors duration-150 text-xs font-bold">
+                                            <i class="fas fa-eye text-[11px]"></i> Detail
+                                        </a>
+                                        
+                                        @php
+                                            $hasReceivedItems = $header->detail->whereNotNull('jumlah_diterima_baik')->isNotEmpty();
+                                        @endphp
+                                        
+                                        @if(!$hasReceivedItems)
+                                            <form action="{{ route('sales.purchase_order.destroy', $header->id) }}" 
+                                                  method="POST" 
+                                                  onsubmit="return confirm('Apakah Anda yakin ingin menghapus Purchase Order ini?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                        class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-500 hover:text-white transition-colors duration-150 text-xs font-bold">
+                                                    <i class="fas fa-trash text-[11px]"></i> Hapus
+                                                </button>
+                                            </form>
+                                        @else
+                                            <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-50 text-slate-400 text-xs font-bold cursor-not-allowed"
+                                                  title="Purchase Order yang sudah diterima tidak dapat dihapus">
+                                                <i class="fas fa-lock text-[11px]"></i> Terkunci
+                                            </span>
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach

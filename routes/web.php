@@ -72,7 +72,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:sales')->prefix('sales')->name('sales.')->group(function () {
         Route::get('/dashboard', [SalesDashboard::class, 'index'])->name('dashboard');
         Route::resource('pengadaan', PengadaanController::class);
-        Route::resource('purchase-order', PurchaseOrderController::class)->except(['edit', 'update', 'destroy'])->names('purchase_order');
+        Route::resource('purchase-order', PurchaseOrderController::class)->except(['edit', 'update'])->names('purchase_order');
 
         // Laporan Read-only
         Route::get('/laporan/penilaian', [SalesLaporan::class, 'penilaian'])->name('laporan.penilaian');

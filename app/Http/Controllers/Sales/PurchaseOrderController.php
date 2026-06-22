@@ -24,7 +24,17 @@ class PurchaseOrderController extends Controller
     public function create()
     {
         $suppliers = Supplier::orderBy('nama')->get();
-        $produks = Produk::with('supplier')->orderBy('nama')->get();
+        $produks = Produk::with('supplier')
+            ->orderBy('nama')
+            ->get()
+            ->map(function($produk) {
+                return [
+                    'id' => $produk->id,
+                    'nama' => $produk->nama,
+                    'jenis_produk' => $produk->jenis_produk,
+                    'supplier_id' => $produk->supplier_id,
+                ];
+            });
         $satuanList = ['Rim', 'Pcs', 'Ltr', 'Lbr', 'Kg', 'Pack', 'Roll'];
 
         return view('sales.purchase_order.create', compact('suppliers', 'produks', 'satuanList'));
@@ -132,5 +142,32 @@ class PurchaseOrderController extends Controller
 
         return redirect()->route('sales.purchase_order.index')
             ->with('success', 'Purchase Order berhasil diperbarui.');
+    }
+
+    public function destroy(PengadaanHeader $purchase_order)
+    {
+        // Only allow deleting if no items have been received yet
+        $hasReceivedItems = $purchase_order->detail()->whereNotNull('jumlah_diterima_baik')->exists();
+        
+        if ($hasReceivedItems) {
+            return redirect()->route('sales.purchase_order.index')
+                ->with('error', 'Purchase Order yang sudah diterima tidak dapat dihapus.');
+        }
+
+        DB::transaction(function () use ($purchase_order) {
+            // Delete photo if exists
+            if ($purchase_order->foto && \Storage::disk('public')->exists($purchase_order->foto)) {
+                \Storage::disk('public')->delete($purchase_order->foto);
+            }
+
+            // Delete details
+            $purchase_order->detail()->delete();
+
+            // Delete header
+            $purchase_order->delete();
+        });
+
+        return redirect()->route('sales.purchase_order.index')
+            ->with('success', 'Purchase Order berhasil dihapus.');
     }
 }

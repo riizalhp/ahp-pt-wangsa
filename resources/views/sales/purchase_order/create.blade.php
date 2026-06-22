@@ -27,11 +27,23 @@
           x-data="{
               items: {{ old('items') ? json_encode(old('items')) : '[{produk_id: \'\', jumlah_dipesan: \'\', satuan: \'\'}]' }},
               satuanList: @js($satuanList),
+              selectedSupplierId: '{{ old('supplier_id', '') }}',
+              allProducts: @js($produks),
+              get filteredProducts() {
+                  if (!this.selectedSupplierId) return this.allProducts;
+                  return this.allProducts.filter(p => p.supplier_id == this.selectedSupplierId);
+              },
               addItem() {
                   this.items.push({ produk_id: '', jumlah_dipesan: '', satuan: '' });
               },
               removeItem(index) {
                   if (this.items.length > 1) this.items.splice(index, 1);
+              },
+              onSupplierChange() {
+                  // Reset all product selections when supplier changes
+                  this.items.forEach(item => {
+                      item.produk_id = '';
+                  });
               }
           }">
         @csrf
@@ -53,6 +65,8 @@
                         Pilih Supplier <span class="text-red-500">*</span>
                     </label>
                     <select name="supplier_id" id="supplier_id" required
+                            x-model="selectedSupplierId"
+                            @change="onSupplierChange()"
                             class="block w-full px-4 py-2.5 rounded-xl border @error('supplier_id') border-red-400 bg-red-50 @else border-slate-200 bg-slate-50 @enderror focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium">
                         <option value="">-- Pilih Supplier --</option>
                         @foreach($suppliers as $s)
@@ -185,11 +199,12 @@
                                     <select :name="`items[${index}][produk_id]`" x-model="item.produk_id" required
                                             class="block w-full min-w-[220px] px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium">
                                         <option value="">-- Pilih Produk --</option>
-                                        @foreach($produks as $p)
-                                            <option value="{{ $p->id }}">
-                                                {{ $p->nama }}{{ $p->jenis_produk ? ' — ' . $p->jenis_produk : '' }}
-                                            </option>
-                                        @endforeach
+                                        <template x-if="!selectedSupplierId">
+                                            <option value="" disabled>Pilih supplier terlebih dahulu</option>
+                                        </template>
+                                        <template x-for="p in filteredProducts" :key="p.id">
+                                            <option :value="p.id" x-text="p.nama + (p.jenis_produk ? ' — ' + p.jenis_produk : '')"></option>
+                                        </template>
                                     </select>
                                 </td>
 
