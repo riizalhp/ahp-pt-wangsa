@@ -71,7 +71,7 @@
                 Kinerja Supplier
             </a>
         @elseif(auth()->user()?->role === 'sales')
-            <!-- SALES MENU -->
+            <!-- ADMINISTRATOR PURCHASING MENU -->
             <p class="px-3 mb-2 text-[10px] font-bold text-slate-500 tracking-wider uppercase">Menu Utama</p>
             <a href="{{ route('sales.dashboard') }}" class="flex items-center px-3 py-2.5 text-xs font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('sales.dashboard') ? 'bg-teal text-white shadow-md shadow-teal/15 font-semibold' : 'text-slate-400 hover:bg-slate-800/60 hover:text-white' }}">
                 <i class="w-5 fas fa-chart-line text-sm mr-2 {{ request()->routeIs('sales.dashboard') ? 'text-white' : 'text-slate-500' }}"></i>
