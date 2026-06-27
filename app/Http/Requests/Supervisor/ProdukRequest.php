@@ -47,7 +47,12 @@ class ProdukRequest extends FormRequest
             'kapasitas_pasokan' => 'nullable|string|max:150',
             'kapasitas_nilai'   => 'nullable|string|max:100',
             'kapasitas_satuan'  => 'nullable|string|max:50',
-            'kode'              => 'nullable|string|max:50',
+            'kode'              => [
+                'nullable',
+                'string',
+                'max:50',
+                Rule::unique('data_produk')->ignore($produkId),
+            ],
             'satuan'            => 'nullable|string|max:50',
             'harga'             => 'nullable|numeric|min:0',
         ];

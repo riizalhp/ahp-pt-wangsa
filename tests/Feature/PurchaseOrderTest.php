@@ -12,7 +12,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\PropertyTestCase;
 
 /**
- * Feature property tests for the Sales Purchase Order module.
+ * Feature property tests for the Administrator Purchasing Purchase Order module.
  *
  * Feature: procurement-supplier-management
  */

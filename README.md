@@ -213,7 +213,7 @@ Berikut adalah daftar akun default yang sudah otomatis terdaftar di database unt
 | Peran (Role) | Username | Password | Deskripsi Tugas / Akses Fitur |
 | :--- | :--- | :--- | :--- |
 | **Supervisor Procurement** | `spv1` | `password` | Mengelola data kriteria & alternatif, input penilaian AHP, dan menyetujui hasil rekomendasi supplier terbaik. |
-| **Sales Marketing** | `sales1` | `password` | Menginput data Purchase Order (PO) baru dan melihat laporan. |
+| **Administrator Purchasing** | `sales1` | `password` | Menginput data Purchase Order (PO) baru dan melihat laporan. |
 | **Staff Logistik** | `log1` | `password` | Mencatat kedatangan barang aktual (kualitas & keterlambatan pengiriman) serta melihat laporan. |
 
 ---

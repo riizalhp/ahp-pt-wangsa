@@ -1,4 +1,4 @@
-<x-layouts.app title="Dashboard Sales Marketing">
+<x-layouts.app title="Dashboard Administrator Purchasing">
     <!-- Quick Stats Overview -->
     <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
         <!-- Total PO Card -->
