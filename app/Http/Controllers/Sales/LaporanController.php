@@ -8,6 +8,8 @@ use App\Models\Pengadaan;
 use App\Models\Supplier;
 use App\Models\Kriteria;
 use App\Models\PenilaianKriteria;
+use App\Models\Subkriteria;
+use App\Models\PenilaianSubkriteria;
 use App\Services\Ahp\AhpCalculatorService;
 use Illuminate\Http\Request;
 
@@ -23,7 +25,7 @@ class LaporanController extends Controller
     public function penilaian()
     {
         $rankings = HasilAhp::with('supplier')->orderBy('ranking', 'asc')->get();
-        $kriterias = Kriteria::orderBy('id', 'asc')->get();
+        $kriterias = Kriteria::with('subkriteria')->orderBy('id', 'asc')->get();
         $kriteriaIds = $kriterias->pluck('id')->toArray();
         
         $kExistingIndexed = [];
@@ -35,12 +37,84 @@ class LaporanController extends Controller
         if (count($kExistingIndexed) > 0) {
             $matrix = $this->buildMatrixFromPairs($kriteriaIds, $kExistingIndexed);
             $result = $this->calculator->calculate($matrix);
-            $kriteriaWeights = $result->weights;
-        } else {
-            $kriteriaWeights = array_fill(0, count($kriterias), 0.0);
+            foreach ($kriteriaIds as $idx => $id) {
+                $kriteriaWeights[$id] = $result->weights[$idx] ?? 0.0;
+            }
         }
 
-        return view('laporan.penilaian', compact('rankings', 'kriterias', 'kriteriaWeights'));
+        // Calculate subkriteria weights (both local and global)
+        $subkriterias = Subkriteria::with('kriteria')->orderBy('kriteria_id')->orderBy('id')->get();
+        $subkriteriaWeights = []; // Local weights
+        $globalSubkriteriaWeights = []; // Global weights
+        
+        foreach ($kriterias as $kriteria) {
+            $kSub = $subkriterias->where('kriteria_id', $kriteria->id)->values();
+            $kSubIds = $kSub->pluck('id')->toArray();
+            $nSub = count($kSubIds);
+
+            if ($nSub === 0) {
+                continue;
+            } elseif ($nSub === 1) {
+                $subkriteriaWeights[$kSubIds[0]] = 1.0;
+            } else {
+                $subMatrix = $this->buildSubkriteriaMatrix($kriteria->id, $kSubIds);
+                $subResult = $this->calculator->calculate($subMatrix);
+                foreach ($kSubIds as $idx => $id) {
+                    $subkriteriaWeights[$id] = $subResult->weights[$idx] ?? 0.0;
+                }
+            }
+
+            // Calculate global weights
+            $kW = $kriteriaWeights[$kriteria->id] ?? 0.0;
+            foreach ($kSubIds as $id) {
+                $globalSubkriteriaWeights[$id] = $kW * ($subkriteriaWeights[$id] ?? 0.0);
+            }
+        }
+
+        return view('laporan.penilaian', compact(
+            'rankings', 
+            'kriterias', 
+            'kriteriaWeights', 
+            'subkriterias', 
+            'globalSubkriteriaWeights'
+        ));
+    }
+
+    protected function buildSubkriteriaMatrix(int $kriteriaId, array $ids): array
+    {
+        $n = count($ids);
+        $matrix = [];
+
+        $records = PenilaianSubkriteria::where('kriteria_id', $kriteriaId)
+            ->whereIn('a_id', $ids)
+            ->whereIn('b_id', $ids)
+            ->get();
+
+        for ($i = 0; $i < $n; $i++) {
+            $matrix[$i] = [];
+            for ($j = 0; $j < $n; $j++) {
+                if ($i === $j) {
+                    $matrix[$i][$j] = 1.0;
+                } else {
+                    $aId = $ids[$i];
+                    $bId = $ids[$j];
+
+                    $record = $records->first(fn($r) => $r->a_id == $aId && $r->b_id == $bId);
+                    if ($record) {
+                        $matrix[$i][$j] = $record->nilai;
+                    } else {
+                        $mirror = $records->first(fn($r) => $r->a_id == $bId && $r->b_id == $aId);
+                        if ($mirror && $mirror->nilai > 0) {
+                            $matrix[$i][$j] = 1.0 / $mirror->nilai;
+                        } else {
+                            $matrix[$i][$j] = 1.0;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $matrix;
     }
 
     public function pengadaan(Request $request)

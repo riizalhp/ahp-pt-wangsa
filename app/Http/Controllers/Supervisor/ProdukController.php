@@ -127,9 +127,23 @@ class ProdukController extends Controller
      */
     public function destroy(Produk $produk)
     {
+        // Check if product is used in procurement details
         if (PengadaanDetail::where('produk_id', $produk->id)->exists()) {
             return redirect()->route('supervisor.produk.index')
                 ->with('error', 'Produk tidak dapat dihapus karena masih digunakan dalam data pengadaan.');
+        }
+
+        // Check if product's supplier is used in any penilaian
+        $supplierId = $produk->supplier_id;
+        if ($supplierId) {
+            $usedInPenilaian = \App\Models\PenilaianSupplier::where('a_supplier_id', $supplierId)
+                ->orWhere('b_supplier_id', $supplierId)
+                ->exists();
+
+            if ($usedInPenilaian) {
+                return redirect()->route('supervisor.produk.index')
+                    ->with('error', 'Produk tidak dapat dihapus karena supplier-nya masih dalam penilaian. Gunakan tombol Refresh di halaman Penilaian untuk reset penilaian terlebih dahulu.');
+            }
         }
 
         $produk->delete();

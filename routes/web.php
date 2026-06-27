@@ -53,6 +53,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/ahp/supplier', [AhpController::class, 'supplierSave']);
 
         Route::get('/ahp/hasil', [AhpController::class, 'hasil'])->name('ahp.hasil');
+        Route::post('/ahp/reset', [AhpController::class, 'resetPenilaian'])->name('ahp.reset');
 
         // Laporan — Supervisor only (Req 14.1, 14.4, 14.5)
         // supervisor.laporan.penilaian (AHP Hasil Penilaian) is exclusively inside this role:supervisor group.

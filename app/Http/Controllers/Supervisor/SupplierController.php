@@ -76,13 +76,16 @@ class SupplierController extends Controller
      */
     public function destroy(Supplier $supplier)
     {
+        // Check if supplier is used in products
+        $usedByProduk = $supplier->produk()->exists();
+
         $usedByPo = PengadaanHeader::where('supplier_id', $supplier->id)->exists();
 
         $usedByPenilaian = PenilaianSupplier::where('a_supplier_id', $supplier->id)
             ->orWhere('b_supplier_id', $supplier->id)
             ->exists();
 
-        if ($usedByPo || $usedByPenilaian) {
+        if ($usedByProduk || $usedByPo || $usedByPenilaian) {
             return redirect()->back()
                 ->with('error', 'Supplier tidak dapat dihapus karena masih digunakan.');
         }

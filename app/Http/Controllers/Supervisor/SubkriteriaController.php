@@ -75,16 +75,17 @@ class SubkriteriaController extends Controller
 
     public function destroy(Subkriteria $subkriterium)
     {
-        // Cascade-deletion guard (Req 3.6)
+        // Check if used in penilaian subkriteria first
         $hasPenilaianSub = PenilaianSubkriteria::where('a_id', $subkriterium->id)
             ->orWhere('b_id', $subkriterium->id)
             ->exists();
 
+        // Check if used in penilaian supplier
         $hasPenilaianSup = PenilaianSupplier::where('subkriteria_id', $subkriterium->id)->exists();
 
         if ($hasPenilaianSub || $hasPenilaianSup) {
             return redirect()->route('supervisor.kriteria.index')
-                ->with('error', 'Subkriteria "' . $subkriterium->nama . '" tidak dapat dihapus karena memiliki data penilaian.');
+                ->with('error', 'Subkriteria "' . $subkriterium->nama . '" tidak dapat dihapus karena masih dalam penilaian. Gunakan tombol Refresh di halaman Penilaian untuk reset penilaian terlebih dahulu.');
         }
 
         $subkriterium->delete();

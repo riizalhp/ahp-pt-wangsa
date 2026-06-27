@@ -31,7 +31,8 @@ class PurchaseOrderController extends Controller
                 return [
                     'id' => $produk->id,
                     'nama' => $produk->nama,
-                    'jenis_produk' => $produk->jenis_produk,
+                    'ukuran' => $produk->ukuran,
+                    'merk' => $produk->merk,
                     'supplier_id' => $produk->supplier_id,
                 ];
             });
@@ -90,7 +91,18 @@ class PurchaseOrderController extends Controller
         }
 
         $suppliers = Supplier::orderBy('nama')->get();
-        $produks = Produk::with('supplier')->orderBy('nama')->get();
+        $produks = Produk::with('supplier')
+            ->orderBy('nama')
+            ->get()
+            ->map(function($produk) {
+                return [
+                    'id' => $produk->id,
+                    'nama' => $produk->nama,
+                    'ukuran' => $produk->ukuran,
+                    'merk' => $produk->merk,
+                    'supplier_id' => $produk->supplier_id,
+                ];
+            });
         $satuanList = ['Rim', 'Pcs', 'Ltr', 'Lbr', 'Kg', 'Pack', 'Roll'];
 
         $purchase_order->load('detail.produk');

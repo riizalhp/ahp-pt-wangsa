@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Supervisor;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ProdukRequest extends FormRequest
 {
@@ -23,11 +24,22 @@ class ProdukRequest extends FormRequest
      */
     public function rules(): array
     {
+        $produkId = $this->route('produk');
+
         return [
             'supplier_id'       => 'required|exists:data_supplier,id',
             'nama'              => 'required|string|max:255',
             'jenis_produk'      => 'nullable|string|max:150',
-            'merk'              => 'required|string|max:100',
+            'merk'              => [
+                'required',
+                'string',
+                'max:100',
+                Rule::unique('data_produk')->where(function ($query) {
+                    return $query
+                        ->where('supplier_id', $this->input('supplier_id'))
+                        ->where('nama', $this->input('nama'));
+                })->ignore($produkId),
+            ],
             'ukuran'            => 'nullable|string|max:100',
             'panjang'           => 'nullable|string|max:50',
             'lebar'             => 'nullable|string|max:50',
@@ -52,6 +64,7 @@ class ProdukRequest extends FormRequest
             'supplier_id.required' => 'Supplier wajib dipilih.',
             'supplier_id.exists'   => 'Supplier yang dipilih tidak valid.',
             'nama.required'        => 'Nama produk wajib diisi.',
+            'merk.unique'          => 'Produk dengan nama dan merk yang sama dari supplier ini sudah ada di database.',
         ];
     }
 }

@@ -437,6 +437,26 @@ class AhpController extends Controller
     }
 
     /**
+     * Reset all penilaian data (Kriteria, Subkriteria, Supplier comparisons and results)
+     */
+    public function resetPenilaian()
+    {
+        DB::transaction(function () {
+            // Delete all penilaian data
+            PenilaianKriteria::query()->delete();
+            PenilaianSubkriteria::query()->delete();
+            PenilaianSupplier::query()->delete();
+            HasilAhp::query()->delete();
+            
+            // Clear session data
+            session()->forget('ahp_selected_suppliers');
+        });
+
+        return redirect()->route('supervisor.ahp.alternatif')
+            ->with('success', 'Semua data penilaian berhasil direset. Silakan mulai penilaian baru dari awal.');
+    }
+
+    /**
      * Helper to build matrix from indexed pairs
      */
     protected function buildMatrixFromPairs(array $ids, array $indexedPairs): array
