@@ -23,7 +23,7 @@ class AkunSeeder extends Seeder
         Akun::create([
             'username' => 'sales1',
             'password_hash' => Hash::make('password'),
-            'nama' => 'Sales Marketing',
+            'nama' => 'Administrator Purchasing',
             'role' => 'sales',
         ]);
 

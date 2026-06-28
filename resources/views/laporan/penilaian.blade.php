@@ -7,11 +7,24 @@
         
         <!-- Supervisor only action button (Req 10.4) -->
         @if(auth()->user()->role === 'supervisor')
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-3">
                 <a href="{{ route('supervisor.laporan.penilaian.cetak') }}" target="_blank"
                    class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-teal text-white text-xs font-bold hover:bg-teal-dark shadow-md shadow-teal/15 transition-all">
-                    <i class="fas fa-print mr-1"></i> Cetak PDF
+                    <i class="fas fa-print"></i> Cetak PDF
                 </a>
+                
+                @if(!$rankings->isEmpty())
+                    <form action="{{ route('supervisor.laporan.penilaian.reset') }}" method="POST" 
+                          onsubmit="return confirm('Apakah Anda yakin ingin mereset semua hasil penilaian? Data peringkat akan dihapus dan Anda perlu melakukan perhitungan AHP ulang.');"
+                          class="inline">
+                        @csrf
+                        <button type="submit"
+                                style="background-color: #dc2626; color: white; border: 2px solid #991b1b;"
+                                class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold hover:opacity-90 shadow-md transition-all">
+                            <i class="fas fa-redo"></i> Reset Penilaian
+                        </button>
+                    </form>
+                @endif
             </div>
         @endif
     </div>

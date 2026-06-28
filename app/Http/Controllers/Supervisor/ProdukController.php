@@ -48,7 +48,24 @@ class ProdukController extends Controller
         
         // Auto-generate kode if not provided
         if (empty($data['kode'])) {
-            $data['kode'] = 'P' . str_pad(Produk::count() + 1, 4, '0', STR_PAD_LEFT);
+            // Generate new code based on highest existing
+            $lastProduk = Produk::where('kode', 'LIKE', 'P%')
+                ->orderByRaw('CAST(SUBSTRING(kode, 2) AS UNSIGNED) DESC')
+                ->first();
+            
+            $nextNumber = 1;
+            if ($lastProduk && preg_match('/P(\d+)/', $lastProduk->kode, $matches)) {
+                $nextNumber = intval($matches[1]) + 1;
+            }
+            
+            // Generate unique code, with retry logic in case of collision
+            do {
+                $data['kode'] = 'P' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+                $exists = Produk::where('kode', $data['kode'])->exists();
+                if ($exists) {
+                    $nextNumber++;
+                }
+            } while ($exists);
         }
         
         // Combine dimensions if provided separately (order: Lebar x Panjang x Tinggi for paper industry)

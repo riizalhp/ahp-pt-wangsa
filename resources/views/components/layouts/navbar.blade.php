@@ -13,7 +13,7 @@
                 @if(auth()->user()?->role === 'supervisor')
                     Supervisor Procurement Panel
                 @elseif(auth()->user()?->role === 'sales')
-                    Sales Marketing Panel
+                    Administrator Purchasing Panel
                 @elseif(auth()->user()?->role === 'logistik')
                     Staff Logistik Panel
                 @else

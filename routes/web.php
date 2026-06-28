@@ -62,6 +62,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/laporan/penilaian/pdf', [SupervisorLaporan::class, 'penilaianPdf'])->name('laporan.penilaian.pdf');
         Route::get('/laporan/penilaian/cetak', [SupervisorLaporan::class, 'penilaianCetak'])->name('laporan.penilaian.cetak');
         Route::get('/laporan/penilaian', [SupervisorLaporan::class, 'penilaian'])->name('laporan.penilaian');
+        Route::post('/laporan/penilaian/reset', [SupervisorLaporan::class, 'resetPenilaian'])->name('laporan.penilaian.reset');
         Route::get('/laporan/pengadaan', [SupervisorLaporan::class, 'pengadaan'])->name('laporan.pengadaan');
         Route::get('/laporan/riwayat/{id}', [SupervisorLaporan::class, 'riwayatDetail'])->name('laporan.riwayat.detail');
         Route::get('/laporan/profil', [SupervisorLaporan::class, 'profil'])->name('laporan.profil');

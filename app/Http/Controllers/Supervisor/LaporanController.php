@@ -243,6 +243,16 @@ class LaporanController extends Controller
         return view('laporan.profil_detail', compact('supplier', 'pengadaans'));
     }
 
+    public function resetPenilaian()
+    {
+        // Delete all HasilAhp records
+        HasilAhp::query()->delete();
+
+        return redirect()
+            ->route('supervisor.laporan.penilaian')
+            ->with('success', 'Hasil penilaian berhasil direset. Silakan lakukan perhitungan AHP ulang.');
+    }
+
     protected function buildMatrixFromPairs(array $ids, array $indexedPairs): array
     {
         $n = count($ids);
