@@ -24,7 +24,7 @@ return new class extends Migration
         Schema::create('data_pengadaan_detail', function (Blueprint $table) {
             $table->id(); // Detail_ID
             $table->unsignedBigInteger('pengadaan_id');
-            $table->unsignedInteger('produk_id');
+            $table->unsignedBigInteger('produk_id');
             $table->decimal('jumlah_dipesan', 10, 2);                   // Req 3.3
             $table->string('satuan');                                   // Req 3.4
             $table->decimal('jumlah_diterima_baik', 10, 2)->nullable(); // Req 4.3

@@ -104,7 +104,7 @@ return new class extends Migration
             $table->double('nilai');
             $table->timestamp('created_at')->useCurrent();
 
-            $table->unique(['subkriteria_id', 'a_supplier_id', 'b_supplier_id']);
+            $table->unique(['subkriteria_id', 'a_supplier_id', 'b_supplier_id'], 'penilaian_supplier_unique');
             $table->foreign('subkriteria_id')->references('id')->on('data_subkriteria')->onDelete('cascade');
             $table->foreign('a_supplier_id')->references('id')->on('data_supplier')->onDelete('cascade');
             $table->foreign('b_supplier_id')->references('id')->on('data_supplier')->onDelete('cascade');
