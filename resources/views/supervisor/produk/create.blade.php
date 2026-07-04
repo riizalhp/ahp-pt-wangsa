@@ -37,13 +37,9 @@
                 <!-- Jenis Produk -->
                 <div>
                     <label for="jenis_produk" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Jenis Produk</label>
-                    <select name="jenis_produk" id="jenis_produk"
-                            class="block w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium">
-                        <option value="">-- Pilih Jenis --</option>
-                        <option value="Kertas" {{ old('jenis_produk') == 'Kertas' ? 'selected' : '' }}>Kertas</option>
-                        <option value="Lem" {{ old('jenis_produk') == 'Lem' ? 'selected' : '' }}>Lem</option>
-                        <option value="Tinta" {{ old('jenis_produk') == 'Tinta' ? 'selected' : '' }}>Tinta</option>
-                    </select>
+                    <input type="text" name="jenis_produk" id="jenis_produk" value="{{ old('jenis_produk') }}"
+                           class="block w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium"
+                           placeholder="Contoh: Kertas">
                     @error('jenis_produk') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                 </div>
 

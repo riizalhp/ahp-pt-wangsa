@@ -66,7 +66,7 @@ class KriteriaController extends Controller
 
         if ($hasPenilaian) {
             return redirect()->route('supervisor.kriteria.index')
-                ->with('error', 'Kriteria "' . $kriterium->nama . '" tidak dapat dihapus karena masih dalam penilaian. Gunakan tombol Refresh di halaman Penilaian untuk reset penilaian terlebih dahulu.');
+                ->with('error', 'Kriteria "' . $kriterium->nama . '" tidak dapat dihapus karena masih dalam penilaian. Gunakan tombol "Reset Penilaian" di halaman Laporan Penilaian untuk reset semua data penilaian terlebih dahulu.');
         }
 
         // Cascade-deletion guard (Req 3.5)

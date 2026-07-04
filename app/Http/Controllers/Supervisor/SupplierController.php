@@ -85,9 +85,14 @@ class SupplierController extends Controller
             ->orWhere('b_supplier_id', $supplier->id)
             ->exists();
 
-        if ($usedByProduk || $usedByPo || $usedByPenilaian) {
+        if ($usedByPenilaian) {
             return redirect()->back()
-                ->with('error', 'Supplier tidak dapat dihapus karena masih digunakan.');
+                ->with('error', 'Supplier "' . $supplier->nama . '" tidak dapat dihapus karena masih dalam penilaian. Gunakan tombol "Reset Penilaian" di halaman Laporan Penilaian untuk reset semua data penilaian terlebih dahulu.');
+        }
+
+        if ($usedByProduk || $usedByPo) {
+            return redirect()->back()
+                ->with('error', 'Supplier "' . $supplier->nama . '" tidak dapat dihapus karena masih digunakan oleh produk atau purchase order.');
         }
 
         $supplier->delete();

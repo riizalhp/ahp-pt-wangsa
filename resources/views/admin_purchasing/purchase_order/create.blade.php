@@ -203,7 +203,7 @@
                                             <option value="" disabled>Pilih supplier terlebih dahulu</option>
                                         </template>
                                         <template x-for="p in filteredProducts" :key="p.id">
-                                            <option :value="p.id" x-text="p.nama + (p.jenis_produk ? ' — ' + p.jenis_produk : '')"></option>
+                                            <option :value="p.id" x-text="p.nama + ' - ' + p.ukuran + ' - ' + p.merk"></option>
                                         </template>
                                     </select>
                                 </td>

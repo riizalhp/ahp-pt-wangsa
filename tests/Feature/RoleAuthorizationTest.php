@@ -34,7 +34,7 @@ class RoleAuthorizationTest extends TestCase
     public function testUnauthenticatedAccessRedirectsToLogin(): void
     {
         $this->get(route('supervisor.dashboard'))->assertRedirect(route('login'));
-        $this->get(route('sales.dashboard'))->assertRedirect(route('login'));
+        $this->get(route('admin_purchasing.dashboard'))->assertRedirect(route('login'));
         $this->get(route('logistik.penerimaan.index'))->assertRedirect(route('login'));
     }
 
@@ -55,12 +55,12 @@ class RoleAuthorizationTest extends TestCase
      */
     public function testCrossRoleAccessIsForbidden(): void
     {
-        $sales = $this->akun('sales', 'sales1');
-        $this->actingAs($sales)->get(route('supervisor.dashboard'))->assertForbidden();
-        $this->actingAs($sales)->get(route('logistik.penerimaan.index'))->assertForbidden();
+        $adminPurchasing = $this->akun('admin_purchasing', 'admin_purchasing1');
+        $this->actingAs($adminPurchasing)->get(route('supervisor.dashboard'))->assertForbidden();
+        $this->actingAs($adminPurchasing)->get(route('logistik.penerimaan.index'))->assertForbidden();
 
         $logistik = $this->akun('logistik', 'log1');
-        $this->actingAs($logistik)->get(route('sales.dashboard'))->assertForbidden();
+        $this->actingAs($logistik)->get(route('admin_purchasing.dashboard'))->assertForbidden();
     }
 
     /**
@@ -77,14 +77,14 @@ class RoleAuthorizationTest extends TestCase
     }
 
     /**
-     * Req 14.2: Sales can reach the Purchase Order page.
+     * Req 14.2: Admin Purchasing can reach the Purchase Order page.
      */
-    public function testSalesCanAccessPurchaseOrder(): void
+    public function testAdminPurchasingCanAccessPurchaseOrder(): void
     {
-        $sales = $this->akun('sales', 'sales1');
+        $adminPurchasing = $this->akun('admin_purchasing', 'admin_purchasing1');
 
-        $this->actingAs($sales)->get(route('sales.purchase_order.index'))->assertOk();
-        $this->actingAs($sales)->get(route('sales.purchase_order.create'))->assertOk();
+        $this->actingAs($adminPurchasing)->get(route('admin_purchasing.purchase_order.index'))->assertOk();
+        $this->actingAs($adminPurchasing)->get(route('admin_purchasing.purchase_order.create'))->assertOk();
     }
 
     /**

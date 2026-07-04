@@ -245,12 +245,20 @@ class LaporanController extends Controller
 
     public function resetPenilaian()
     {
-        // Delete all HasilAhp records
-        HasilAhp::query()->delete();
+        DB::transaction(function () {
+            // Delete all penilaian data (kriteria, subkriteria, supplier comparisons and results)
+            PenilaianKriteria::query()->delete();
+            PenilaianSubkriteria::query()->delete();
+            PenilaianSupplier::query()->delete();
+            HasilAhp::query()->delete();
+            
+            // Clear session data
+            session()->forget('ahp_selected_suppliers');
+        });
 
         return redirect()
             ->route('supervisor.laporan.penilaian')
-            ->with('success', 'Hasil penilaian berhasil direset. Silakan lakukan perhitungan AHP ulang.');
+            ->with('success', 'Semua data penilaian berhasil direset. Kriteria, subkriteria, dan supplier sekarang dapat dihapus. Silakan mulai penilaian baru dari awal.');
     }
 
     protected function buildMatrixFromPairs(array $ids, array $indexedPairs): array

@@ -85,7 +85,7 @@ class SubkriteriaController extends Controller
 
         if ($hasPenilaianSub || $hasPenilaianSup) {
             return redirect()->route('supervisor.kriteria.index')
-                ->with('error', 'Subkriteria "' . $subkriterium->nama . '" tidak dapat dihapus karena masih dalam penilaian. Gunakan tombol Refresh di halaman Penilaian untuk reset penilaian terlebih dahulu.');
+                ->with('error', 'Subkriteria "' . $subkriterium->nama . '" tidak dapat dihapus karena masih dalam penilaian. Gunakan tombol "Reset Penilaian" di halaman Laporan Penilaian untuk reset semua data penilaian terlebih dahulu.');
         }
 
         $subkriterium->delete();

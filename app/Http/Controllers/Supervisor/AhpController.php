@@ -366,7 +366,12 @@ class AhpController extends Controller
         });
 
         // Verify consistency for all subkriteria groups
-        $suppliers = Supplier::all();
+        // IMPORTANT: Must use the same suppliers as in the form (from session)
+        if (session()->has('ahp_selected_suppliers')) {
+            $suppliers = Supplier::whereIn('id', session('ahp_selected_suppliers'))->get();
+        } else {
+            $suppliers = Supplier::all();
+        }
         $supplierIds = $suppliers->pluck('id')->toArray();
         $subkriterias = Subkriteria::all();
         

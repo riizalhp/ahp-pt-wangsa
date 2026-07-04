@@ -31,7 +31,7 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        return view('sales.dashboard', compact(
+        return view('admin_purchasing.dashboard', compact(
             'poCount',
             'pendingCount',
             'receivedCount',

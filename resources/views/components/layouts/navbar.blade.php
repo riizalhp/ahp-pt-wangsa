@@ -12,7 +12,7 @@
             <h2 class="text-sm font-semibold text-slate-500 uppercase tracking-wider">
                 @if(auth()->user()?->role === 'supervisor')
                     Supervisor Procurement Panel
-                @elseif(auth()->user()?->role === 'sales')
+                @elseif(auth()->user()?->role === 'admin_purchasing')
                     Administrator Purchasing Panel
                 @elseif(auth()->user()?->role === 'logistik')
                     Staff Logistik Panel
