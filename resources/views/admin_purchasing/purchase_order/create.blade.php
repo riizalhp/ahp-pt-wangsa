@@ -1,6 +1,6 @@
 <x-layouts.app title="Buat Purchase Order Baru">
     <div class="mb-6">
-        <a href="{{ route('sales.purchase_order.index') }}"
+        <a href="{{ route('admin_purchasing.purchase_order.index') }}"
            class="text-xs font-bold text-teal hover:text-teal-dark flex items-center gap-1 w-fit">
             <i class="fas fa-arrow-left"></i> Kembali ke Daftar
         </a>
@@ -23,7 +23,7 @@
         </div>
     @endif
 
-    <form action="{{ route('sales.purchase_order.store') }}" method="POST" enctype="multipart/form-data"
+    <form action="{{ route('admin_purchasing.purchase_order.store') }}" method="POST" enctype="multipart/form-data"
           x-data="{
               items: {{ old('items') ? json_encode(old('items')) : '[{produk_id: \'\', jumlah_dipesan: \'\', satuan: \'\'}]' }},
               satuanList: @js($satuanList),
@@ -262,7 +262,7 @@
 
         {{-- ── Form Actions ── --}}
         <div class="flex items-center justify-end gap-3">
-            <a href="{{ route('sales.purchase_order.index') }}"
+            <a href="{{ route('admin_purchasing.purchase_order.index') }}"
                class="px-5 py-2.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold hover:bg-slate-200 transition-colors">
                 Batalkan
             </a>

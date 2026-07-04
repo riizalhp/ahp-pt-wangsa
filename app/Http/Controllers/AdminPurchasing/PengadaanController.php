@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Sales;
+namespace App\Http\Controllers\AdminPurchasing;
 
 use App\Http\Controllers\Controller;
 use App\Models\Pengadaan;
@@ -17,14 +17,14 @@ class PengadaanController extends Controller
         $pengadaans = Pengadaan::with(['supplier', 'produk'])
             ->orderBy('id', 'desc')
             ->get();
-        return view('sales.pengadaan.index', compact('pengadaans'));
+        return view('admin_purchasing.pengadaan.index', compact('pengadaans'));
     }
 
     public function create()
     {
         $suppliers = Supplier::all();
         $produks = Produk::all();
-        return view('sales.pengadaan.create', compact('suppliers', 'produks'));
+        return view('admin_purchasing.pengadaan.create', compact('suppliers', 'produks'));
     }
 
     public function store(Request $request)
@@ -57,7 +57,7 @@ class PengadaanController extends Controller
             'catatan' => $validated['catatan'] ?? null,
         ]);
 
-        return redirect()->route('sales.pengadaan.index')
+        return redirect()->route('admin_purchasing.pengadaan.index')
             ->with('success', 'Purchase Order #' . $pengadaan->id . ' berhasil dibuat.');
     }
 
@@ -65,19 +65,19 @@ class PengadaanController extends Controller
     {
         // Block editing if it has already been received/processed by logistik
         if ($pengadaan->tanggal_kedatangan !== null) {
-            return redirect()->route('sales.pengadaan.index')
+            return redirect()->route('admin_purchasing.pengadaan.index')
                 ->with('error', 'PO yang sudah diproses penerimaannya oleh logistik tidak dapat diedit.');
         }
 
         $suppliers = Supplier::all();
         $produks = Produk::all();
-        return view('sales.pengadaan.edit', compact('pengadaan', 'suppliers', 'produks'));
+        return view('admin_purchasing.pengadaan.edit', compact('pengadaan', 'suppliers', 'produks'));
     }
 
     public function update(Request $request, Pengadaan $pengadaan)
     {
         if ($pengadaan->tanggal_kedatangan !== null) {
-            return redirect()->route('sales.pengadaan.index')
+            return redirect()->route('admin_purchasing.pengadaan.index')
                 ->with('error', 'PO yang sudah diproses penerimaannya oleh logistik tidak dapat diedit.');
         }
 
@@ -112,14 +112,14 @@ class PengadaanController extends Controller
             'foto_path' => $pengadaan->foto_path,
         ]);
 
-        return redirect()->route('sales.pengadaan.index')
+        return redirect()->route('admin_purchasing.pengadaan.index')
             ->with('success', 'Purchase Order #' . $pengadaan->id . ' berhasil diperbarui.');
     }
 
     public function destroy(Pengadaan $pengadaan)
     {
         if ($pengadaan->tanggal_kedatangan !== null) {
-            return redirect()->route('sales.pengadaan.index')
+            return redirect()->route('admin_purchasing.pengadaan.index')
                 ->with('error', 'PO yang sudah diproses penerimaannya oleh logistik tidak dapat dihapus.');
         }
 
@@ -131,7 +131,7 @@ class PengadaanController extends Controller
 
         $pengadaan->delete();
 
-        return redirect()->route('sales.pengadaan.index')
+        return redirect()->route('admin_purchasing.pengadaan.index')
             ->with('success', 'Purchase Order berhasil dihapus.');
     }
 }

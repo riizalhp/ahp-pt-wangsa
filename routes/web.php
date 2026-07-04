@@ -10,10 +10,10 @@ use App\Http\Controllers\Supervisor\SubkriteriaController;
 use App\Http\Controllers\Supervisor\AhpController;
 use App\Http\Controllers\Supervisor\LaporanController as SupervisorLaporan;
 
-use App\Http\Controllers\Sales\DashboardController as SalesDashboard;
-use App\Http\Controllers\Sales\PengadaanController;
-use App\Http\Controllers\Sales\PurchaseOrderController;
-use App\Http\Controllers\Sales\LaporanController as SalesLaporan;
+use App\Http\Controllers\AdminPurchasing\DashboardController as SalesDashboard;
+use App\Http\Controllers\AdminPurchasing\PengadaanController;
+use App\Http\Controllers\AdminPurchasing\PurchaseOrderController;
+use App\Http\Controllers\AdminPurchasing\LaporanController as SalesLaporan;
 
 use App\Http\Controllers\Logistik\DashboardController as LogistikDashboard;
 use App\Http\Controllers\Logistik\AktualPengadaanController;
@@ -57,7 +57,7 @@ Route::middleware('auth')->group(function () {
 
         // Laporan — Supervisor only (Req 14.1, 14.4, 14.5)
         // supervisor.laporan.penilaian (AHP Hasil Penilaian) is exclusively inside this role:supervisor group.
-        // Logistik and Sales cannot access this route — EnsureRole aborts 403 if they attempt direct access.
+        // Logistik and Admin Purchasing cannot access this route — EnsureRole aborts 403 if they attempt direct access.
         Route::get('/laporan/kinerja', [SupervisorLaporan::class, 'kinerja'])->name('laporan.kinerja');
         Route::get('/laporan/penilaian/pdf', [SupervisorLaporan::class, 'penilaianPdf'])->name('laporan.penilaian.pdf');
         Route::get('/laporan/penilaian/cetak', [SupervisorLaporan::class, 'penilaianCetak'])->name('laporan.penilaian.cetak');
@@ -69,9 +69,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/laporan/profil/{id}', [SupervisorLaporan::class, 'profilDetail'])->name('laporan.profil.detail');
     });
 
-    // Sales routes
+    // Admin Purchasing routes
     // EnsureRole middleware: aborts 403 on role mismatch, redirects to login when unauthenticated (Req 14.5, 14.6)
-    Route::middleware('role:sales')->prefix('sales')->name('sales.')->group(function () {
+    Route::middleware('role:admin_purchasing')->prefix('admin_purchasing')->name('admin_purchasing.')->group(function () {
         Route::get('/dashboard', [SalesDashboard::class, 'index'])->name('dashboard');
         Route::resource('pengadaan', PengadaanController::class);
         Route::resource('purchase-order', PurchaseOrderController::class)->except(['edit', 'update'])->names('purchase_order');

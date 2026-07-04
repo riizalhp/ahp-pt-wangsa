@@ -1,7 +1,7 @@
 <x-layouts.app title="Daftar Purchase Order (Pengadaan)">
     <div class="flex items-center justify-between mb-6">
         <p class="text-xs text-slate-500 font-medium">Halaman untuk mencatat pemesanan produk (Purchase Order) baru ke supplier mitra.</p>
-        <a href="{{ route('sales.pengadaan.create') }}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-teal text-white text-xs font-bold hover:bg-teal-dark shadow-md transition-all duration-150">
+        <a href="{{ route('admin_purchasing.pengadaan.create') }}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-teal text-white text-xs font-bold hover:bg-teal-dark shadow-md transition-all duration-150">
             <i class="fas fa-plus"></i> Buat PO Baru
         </a>
     </div>
@@ -61,10 +61,10 @@
                                 <td class="py-4 text-right">
                                     <div class="flex items-center justify-end gap-2">
                                         @if($po->tanggal_kedatangan === null)
-                                            <a href="{{ route('sales.pengadaan.edit', $po->id) }}" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 text-slate-600 hover:bg-teal hover:text-white transition-colors duration-150" title="Edit">
+                                            <a href="{{ route('admin_purchasing.pengadaan.edit', $po->id) }}" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 text-slate-600 hover:bg-teal hover:text-white transition-colors duration-150" title="Edit">
                                                 <i class="fas fa-pen text-xs"></i>
                                             </a>
-                                            <form action="{{ route('sales.pengadaan.destroy', $po->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus PO ini?')" class="inline">
+                                            <form action="{{ route('admin_purchasing.pengadaan.destroy', $po->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus PO ini?')" class="inline">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 text-red-500 hover:bg-red-600 hover:text-white transition-colors duration-150" title="Hapus">

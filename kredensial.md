@@ -7,7 +7,7 @@ Berikut adalah daftar akun default yang dapat digunakan untuk masuk ke dalam Sis
 | Peran (Role) | Username | Password | Deskripsi Tugas / Akses Fitur |
 | :--- | :--- | :--- | :--- |
 | **Supervisor Procurement** | `spv1` | `password` | Mengelola data master (Supplier, Produk, Kriteria, Subkriteria), melakukan input perbandingan berpasangan (AHP) untuk menentukan peringkat, dan menyetujui/mengajukan laporan penilaian. |
-| **Sales Marketing** | `sales1` | `password` | Menginput data Purchase Order (PO) baru untuk pengadaan barang ke supplier beserta dokumentasi foto, dan melihat laporan secara read-only. |
+| **Administrator Purchasing** | `sales1` | `password` | Menginput data Purchase Order (PO) baru untuk pengadaan barang ke supplier beserta dokumentasi foto, dan melihat laporan secara read-only. |
 | **Staff Logistik** | `log1` | `password` | Mencatat kedatangan barang aktual (tanggal kedatangan, jumlah diterima, jumlah cacat) untuk menghitung persentase kualitas & keterlambatan secara otomatis, dan melihat laporan secara read-only. |
 
 ---

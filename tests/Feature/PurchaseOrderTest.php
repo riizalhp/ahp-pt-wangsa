@@ -20,19 +20,19 @@ class PurchaseOrderTest extends PropertyTestCase
 {
     use RefreshDatabase;
 
-    private Akun $sales;
+    private Akun $adminPurchasing;
     private Supplier $supplier;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->sales = Akun::firstOrCreate(
+        $this->adminPurchasing = Akun::firstOrCreate(
             ['username' => 'sales1'],
             [
                 'password_hash' => bcrypt('secret'),
-                'nama'          => 'Sales Staff',
-                'role'          => 'sales',
+                'nama'          => 'Administrator Purchasing',
+                'role'          => 'admin_purchasing',
             ]
         );
 
@@ -83,7 +83,7 @@ class PurchaseOrderTest extends PropertyTestCase
 
             $noPo = 'PO-' . uniqid();
 
-            $response = $this->actingAs($this->sales)->post(route('sales.purchase_order.store'), [
+            $response = $this->actingAs($this->adminPurchasing)->post(route('admin_purchasing.purchase_order.store'), [
                 'supplier_id'               => $this->supplier->id,
                 'no_po'                     => $noPo,
                 'tanggal_po'                => '2026-01-10',
@@ -91,7 +91,7 @@ class PurchaseOrderTest extends PropertyTestCase
                 'items'                     => $items,
             ]);
 
-            $response->assertRedirect(route('sales.purchase_order.index'));
+            $response->assertRedirect(route('admin_purchasing.purchase_order.index'));
 
             // Exactly one header.
             $this->assertSame(1, PengadaanHeader::where('no_po', $noPo)->count());
@@ -121,7 +121,7 @@ class PurchaseOrderTest extends PropertyTestCase
             $produk = $this->makeProduk(1);
             $noPo = 'PO-' . uniqid();
 
-            $response = $this->actingAs($this->sales)->post(route('sales.purchase_order.store'), [
+            $response = $this->actingAs($this->adminPurchasing)->post(route('admin_purchasing.purchase_order.store'), [
                 'supplier_id'               => $this->supplier->id,
                 'no_po'                     => $noPo,
                 'tanggal_po'                => '2026-01-10',
@@ -133,7 +133,7 @@ class PurchaseOrderTest extends PropertyTestCase
                 ]],
             ]);
 
-            $response->assertRedirect(route('sales.purchase_order.index'));
+            $response->assertRedirect(route('admin_purchasing.purchase_order.index'));
             $this->assertDatabaseHas('data_pengadaan_detail', ['satuan' => $satuan]);
         });
     }
@@ -152,7 +152,7 @@ class PurchaseOrderTest extends PropertyTestCase
             $tanggalPo = new \DateTimeImmutable('2026-03-01');
             $target = $tanggalPo->modify("-{$daysBefore} days"); // strictly before PO date
 
-            $response = $this->actingAs($this->sales)->post(route('sales.purchase_order.store'), [
+            $response = $this->actingAs($this->adminPurchasing)->post(route('admin_purchasing.purchase_order.store'), [
                 'supplier_id'               => $this->supplier->id,
                 'no_po'                     => 'PO-' . uniqid(),
                 'tanggal_po'                => $tanggalPo->format('Y-m-d'),
@@ -174,7 +174,7 @@ class PurchaseOrderTest extends PropertyTestCase
      */
     public function testPoWithNoLineItemsIsRejected(): void
     {
-        $response = $this->actingAs($this->sales)->post(route('sales.purchase_order.store'), [
+        $response = $this->actingAs($this->adminPurchasing)->post(route('admin_purchasing.purchase_order.store'), [
             'supplier_id'               => $this->supplier->id,
             'no_po'                     => 'PO-EMPTY',
             'tanggal_po'                => '2026-01-10',
@@ -201,7 +201,7 @@ class PurchaseOrderTest extends PropertyTestCase
             'tanggal_kedatangan_target' => '2026-01-20',
         ]);
 
-        $response = $this->actingAs($this->sales)->post(route('sales.purchase_order.store'), [
+        $response = $this->actingAs($this->adminPurchasing)->post(route('admin_purchasing.purchase_order.store'), [
             'supplier_id'               => $this->supplier->id,
             'no_po'                     => 'PO-DUP',
             'tanggal_po'                => '2026-02-10',
@@ -224,7 +224,7 @@ class PurchaseOrderTest extends PropertyTestCase
     {
         $produk = $this->makeProduk(1);
 
-        $response = $this->actingAs($this->sales)->post(route('sales.purchase_order.store'), [
+        $response = $this->actingAs($this->adminPurchasing)->post(route('admin_purchasing.purchase_order.store'), [
             'supplier_id'               => $this->supplier->id,
             'no_po'                     => 'PO-INVALID-QTY',
             'tanggal_po'                => '2026-01-10',

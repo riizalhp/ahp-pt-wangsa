@@ -10,6 +10,15 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // SQLite check constraints enforce the ENUM values created at table definitions.
+        // We drop the constraint or modify the table schema for SQLite.
+        if (DB::getDriverName() === 'sqlite') {
+            DB::table('data_akun')
+                ->where('role', 'sales')
+                ->update(['role' => 'admin_purchasing']);
+            return;
+        }
+
         // Step 1: Change role column to VARCHAR temporarily
         DB::statement("ALTER TABLE data_akun MODIFY COLUMN role VARCHAR(50)");
         
@@ -27,6 +36,13 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (DB::getDriverName() === 'sqlite') {
+            DB::table('data_akun')
+                ->where('role', 'admin_purchasing')
+                ->update(['role' => 'sales']);
+            return;
+        }
+
         // Step 1: Change to VARCHAR
         DB::statement("ALTER TABLE data_akun MODIFY COLUMN role VARCHAR(50)");
         

@@ -1,7 +1,7 @@
 <x-layouts.app title="Daftar Purchase Order">
     <div class="flex items-center justify-between mb-6">
         <p class="text-xs text-slate-500 font-medium">Daftar Purchase Order yang telah dibuat ke supplier mitra.</p>
-        <a href="{{ route('sales.purchase_order.create') }}"
+        <a href="{{ route('admin_purchasing.purchase_order.create') }}"
            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-teal text-white text-xs font-bold hover:bg-teal-dark shadow-md transition-all duration-150">
             <i class="fas fa-plus"></i> Buat PO Baru
         </a>
@@ -52,12 +52,12 @@
                                 </td>
                                 <td class="py-4 text-right">
                                     <div class="flex items-center justify-end gap-2">
-                                        <a href="{{ route('sales.purchase_order.show', $header->id) }}"
+                                        <a href="{{ route('admin_purchasing.purchase_order.show', $header->id) }}"
                                            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-teal hover:text-white transition-colors duration-150 text-xs font-bold">
                                             <i class="fas fa-eye text-[11px]"></i> Detail
                                         </a>
                                         
-                                        <form action="{{ route('sales.purchase_order.destroy', $header->id) }}" 
+                                        <form action="{{ route('admin_purchasing.purchase_order.destroy', $header->id) }}" 
                                               method="POST" 
                                               onsubmit="return confirm('Apakah Anda yakin ingin menghapus Purchase Order ini?');">
                                             @csrf

@@ -11,10 +11,12 @@ use App\Models\Kriteria;
 use App\Models\PenilaianKriteria;
 use App\Models\Subkriteria;
 use App\Models\PenilaianSubkriteria;
+use App\Models\PenilaianSupplier;
 use App\Services\Ahp\AhpCalculatorService;
 use App\Services\Report\PenilaianPdfService;
 use App\Services\Supplier\SupplierMetricsService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class LaporanController extends Controller
 {

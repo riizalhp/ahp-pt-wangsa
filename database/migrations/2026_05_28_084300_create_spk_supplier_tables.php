@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('username')->unique();
             $table->string('password_hash');
             $table->string('nama');
-            $table->enum('role', ['supervisor', 'sales', 'logistik']);
+            $table->string('role'); // ponytail: use VARCHAR for roles to avoid SQLite/MariaDB enum modification headache
             $table->timestamps();
         });
 

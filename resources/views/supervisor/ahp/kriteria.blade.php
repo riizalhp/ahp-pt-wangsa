@@ -133,6 +133,69 @@
                 @endif
             </div>
 
+            <!-- Suggestions Box (shown when not consistent) -->
+            @if(!empty($suggestions) && count($suggestions) > 0)
+                <div class="bg-white p-6 rounded-2xl border border-amber-200/80 shadow-sm">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-500/20 text-amber-600">
+                            <i class="fas fa-lightbulb text-sm"></i>
+                        </div>
+                        <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Saran Perbaikan</h3>
+                    </div>
+                    
+                    <p class="text-xs text-slate-500 mb-4">
+                        Berdasarkan analisis matematis, berikut pasangan yang paling berkontribusi pada inkonsistensi:
+                    </p>
+
+                    <div class="space-y-3">
+                        @foreach($suggestions as $index => $suggestion)
+                            <div class="p-3 rounded-lg border {{ $suggestion['priority'] === 'high' ? 'border-red-200 bg-red-50/50' : ($suggestion['priority'] === 'medium' ? 'border-amber-200 bg-amber-50/50' : 'border-slate-200 bg-slate-50/50') }}">
+                                <!-- Priority Badge -->
+                                <div class="flex items-start gap-2 mb-2">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wide
+                                        {{ $suggestion['priority'] === 'high' ? 'bg-red-500 text-white' : ($suggestion['priority'] === 'medium' ? 'bg-amber-500 text-white' : 'bg-slate-400 text-white') }}">
+                                        {{ $suggestion['priority'] === 'high' ? '🔴 Prioritas Tinggi' : ($suggestion['priority'] === 'medium' ? '🟡 Prioritas Sedang' : '🟢 Opsional') }}
+                                    </span>
+                                </div>
+
+                                <!-- Pair Information -->
+                                <div class="text-xs font-bold text-slate-800 mb-1">
+                                    {{ $suggestion['pair']['name_i'] }} vs {{ $suggestion['pair']['name_j'] }}
+                                </div>
+
+                                <!-- Current vs Suggested -->
+                                <div class="flex items-center gap-2 text-[10px] mb-2">
+                                    <div class="flex items-center gap-1">
+                                        <span class="text-slate-500">Saat ini:</span>
+                                        <span class="font-bold text-red-600">{{ $suggestion['current'] }}</span>
+                                    </div>
+                                    <i class="fas fa-arrow-right text-slate-300"></i>
+                                    <div class="flex items-center gap-1">
+                                        <span class="text-slate-500">Disarankan:</span>
+                                        <span class="font-bold text-teal">{{ $suggestion['suggested'] }}</span>
+                                    </div>
+                                </div>
+
+                                <!-- Explanation -->
+                                <p class="text-[10px] text-slate-600 leading-relaxed">
+                                    {{ $suggestion['explanation'] }}
+                                </p>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <div class="mt-4 p-3 rounded-lg bg-blue-50 border border-blue-200">
+                        <div class="flex items-start gap-2">
+                            <i class="fas fa-info-circle text-blue-500 text-xs mt-0.5"></i>
+                            <p class="text-[10px] text-blue-700 leading-relaxed">
+                                <strong>Catatan:</strong> Nilai yang disarankan dihitung berdasarkan keseluruhan pola penilaian Anda. 
+                                Sesuaikan nilai-nilai di atas, lalu klik <strong>Simpan & Lanjutkan</strong> untuk memeriksa ulang konsistensi.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             <!-- Saaty Scale Explanation -->
             <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
                 <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-4">Panduan Skala Saaty</h3>

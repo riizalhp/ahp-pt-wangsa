@@ -1,6 +1,6 @@
 <x-layouts.app title="Detail Purchase Order">
     <div class="mb-6">
-        <a href="{{ route('sales.purchase_order.index') }}"
+        <a href="{{ route('admin_purchasing.purchase_order.index') }}"
            class="text-xs font-bold text-teal hover:text-teal-dark flex items-center gap-1 w-fit">
             <i class="fas fa-arrow-left"></i> Kembali ke Daftar
         </a>

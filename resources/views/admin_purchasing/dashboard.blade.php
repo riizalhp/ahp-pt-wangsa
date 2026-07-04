@@ -39,7 +39,7 @@
     <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden mt-8">
         <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
             <h3 class="text-sm font-bold text-slate-800 tracking-wide">5 Purchase Order Terakhir</h3>
-            <a href="{{ route('sales.purchase_order.create') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal text-white text-xs font-bold hover:bg-teal-dark shadow-sm transition-colors">
+            <a href="{{ route('admin_purchasing.purchase_order.create') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal text-white text-xs font-bold hover:bg-teal-dark shadow-sm transition-colors">
                 <i class="fas fa-plus"></i> PO Baru
             </a>
         </div>

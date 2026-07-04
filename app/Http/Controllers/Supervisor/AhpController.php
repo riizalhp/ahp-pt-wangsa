@@ -21,11 +21,17 @@ class AhpController extends Controller
 {
     protected $calculator;
     protected $rankingService;
+    protected $advisor;
 
-    public function __construct(AhpCalculatorService $calculator, RankingService $rankingService)
+    public function __construct(
+        AhpCalculatorService $calculator, 
+        RankingService $rankingService,
+        \App\Services\Ahp\ConsistencyAdvisor $advisor
+    )
     {
         $this->calculator = $calculator;
         $this->rankingService = $rankingService;
+        $this->advisor = $advisor;
     }
 
     /**
@@ -58,14 +64,22 @@ class AhpController extends Controller
         // Calculate current CR if all pairs are filled
         $cr = null;
         $isConsistent = true;
+        $suggestions = [];
+        
         if (count($existingIndexed) >= count($pairs)) {
             $matrix = $this->buildMatrixFromPairs($kriterias->pluck('id')->toArray(), $existingIndexed);
             $result = $this->calculator->calculate($matrix);
             $cr = $result->CR;
             $isConsistent = $result->consistent;
+            
+            // Generate suggestions if not consistent
+            if (!$result->consistent) {
+                $kriteriaNames = $kriterias->pluck('nama')->toArray();
+                $suggestions = $this->advisor->analyze($matrix, $result->weights, $kriteriaNames);
+            }
         }
 
-        return view('supervisor.ahp.kriteria', compact('kriterias', 'pairs', 'existingIndexed', 'cr', 'isConsistent'));
+        return view('supervisor.ahp.kriteria', compact('kriterias', 'pairs', 'existingIndexed', 'cr', 'isConsistent', 'suggestions'));
     }
 
     /**

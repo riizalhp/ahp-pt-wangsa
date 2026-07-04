@@ -70,21 +70,21 @@
                 <i class="w-5 fas fa-clipboard-list text-sm mr-2 {{ request()->routeIs('supervisor.laporan.kinerja') ? 'text-white' : 'text-slate-500' }}"></i>
                 Kinerja Supplier
             </a>
-        @elseif(auth()->user()?->role === 'sales')
+        @elseif(auth()->user()?->role === 'admin_purchasing')
             <!-- ADMINISTRATOR PURCHASING MENU -->
             <p class="px-3 mb-2 text-[10px] font-bold text-slate-500 tracking-wider uppercase">Menu Utama</p>
-            <a href="{{ route('sales.dashboard') }}" class="flex items-center px-3 py-2.5 text-xs font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('sales.dashboard') ? 'bg-teal text-white shadow-md shadow-teal/15 font-semibold' : 'text-slate-400 hover:bg-slate-800/60 hover:text-white' }}">
-                <i class="w-5 fas fa-chart-line text-sm mr-2 {{ request()->routeIs('sales.dashboard') ? 'text-white' : 'text-slate-500' }}"></i>
+            <a href="{{ route('admin_purchasing.dashboard') }}" class="flex items-center px-3 py-2.5 text-xs font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin_purchasing.dashboard') ? 'bg-teal text-white shadow-md shadow-teal/15 font-semibold' : 'text-slate-400 hover:bg-slate-800/60 hover:text-white' }}">
+                <i class="w-5 fas fa-chart-line text-sm mr-2 {{ request()->routeIs('admin_purchasing.dashboard') ? 'text-white' : 'text-slate-500' }}"></i>
                 Dashboard
             </a>
-            <a href="{{ route('sales.purchase_order.index') }}" class="flex items-center px-3 py-2.5 text-xs font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('sales.purchase_order.*') ? 'bg-teal text-white shadow-md shadow-teal/15 font-semibold' : 'text-slate-400 hover:bg-slate-800/60 hover:text-white' }}">
-                <i class="w-5 fas fa-file-invoice-dollar text-sm mr-2 {{ request()->routeIs('sales.purchase_order.*') ? 'text-white' : 'text-slate-500' }}"></i>
+            <a href="{{ route('admin_purchasing.purchase_order.index') }}" class="flex items-center px-3 py-2.5 text-xs font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin_purchasing.purchase_order.*') ? 'bg-teal text-white shadow-md shadow-teal/15 font-semibold' : 'text-slate-400 hover:bg-slate-800/60 hover:text-white' }}">
+                <i class="w-5 fas fa-file-invoice-dollar text-sm mr-2 {{ request()->routeIs('admin_purchasing.purchase_order.*') ? 'text-white' : 'text-slate-500' }}"></i>
                 Purchase Order
             </a>
             
             <p class="px-3 pt-4 mb-2 text-[10px] font-bold text-slate-500 tracking-wider uppercase">Laporan</p>
-            <a href="{{ route('sales.laporan.penilaian') }}" class="flex items-center px-3 py-2.5 text-xs font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('sales.laporan.penilaian') ? 'bg-teal text-white shadow-md shadow-teal/15 font-semibold' : 'text-slate-400 hover:bg-slate-800/60 hover:text-white' }}">
-                <i class="w-5 fas fa-file-invoice text-sm mr-2 {{ request()->routeIs('sales.laporan.penilaian') ? 'text-white' : 'text-slate-500' }}"></i>
+            <a href="{{ route('admin_purchasing.laporan.penilaian') }}" class="flex items-center px-3 py-2.5 text-xs font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin_purchasing.laporan.penilaian') ? 'bg-teal text-white shadow-md shadow-teal/15 font-semibold' : 'text-slate-400 hover:bg-slate-800/60 hover:text-white' }}">
+                <i class="w-5 fas fa-file-invoice text-sm mr-2 {{ request()->routeIs('admin_purchasing.laporan.penilaian') ? 'text-white' : 'text-slate-500' }}"></i>
                 Hasil Penilaian AHP
             </a>
         @elseif(auth()->user()?->role === 'logistik')

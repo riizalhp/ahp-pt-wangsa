@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Sales;
+namespace App\Http\Controllers\AdminPurchasing;
 
 use App\Http\Controllers\Controller;
 use App\Models\PengadaanHeader;

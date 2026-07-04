@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Sales;
+namespace App\Http\Controllers\AdminPurchasing;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Sales\PurchaseOrderRequest;
+use App\Http\Requests\AdminPurchasing\PurchaseOrderRequest;
 use App\Models\PengadaanHeader;
 use App\Models\PengadaanDetail;
 use App\Models\Supplier;
@@ -18,7 +18,7 @@ class PurchaseOrderController extends Controller
             ->orderBy('id', 'desc')
             ->get();
 
-        return view('sales.purchase_order.index', compact('headers'));
+        return view('admin_purchasing.purchase_order.index', compact('headers'));
     }
 
     public function create()
@@ -38,7 +38,7 @@ class PurchaseOrderController extends Controller
             });
         $satuanList = ['Rim', 'Pcs', 'Ltr', 'Lbr', 'Kg', 'Pack', 'Roll'];
 
-        return view('sales.purchase_order.create', compact('suppliers', 'produks', 'satuanList'));
+        return view('admin_purchasing.purchase_order.create', compact('suppliers', 'produks', 'satuanList'));
     }
 
     public function store(PurchaseOrderRequest $request)
@@ -69,7 +69,7 @@ class PurchaseOrderController extends Controller
             }
         });
 
-        return redirect()->route('sales.purchase_order.index')
+        return redirect()->route('admin_purchasing.purchase_order.index')
             ->with('success', 'Purchase Order berhasil dibuat.');
     }
 
@@ -77,7 +77,7 @@ class PurchaseOrderController extends Controller
     {
         $purchase_order->load('detail.produk');
 
-        return view('sales.purchase_order.show', compact('purchase_order'));
+        return view('admin_purchasing.purchase_order.show', compact('purchase_order'));
     }
 
     public function edit(PengadaanHeader $purchase_order)
@@ -86,7 +86,7 @@ class PurchaseOrderController extends Controller
         $hasReceivedItems = $purchase_order->detail()->whereNotNull('jumlah_diterima_baik')->exists();
         
         if ($hasReceivedItems) {
-            return redirect()->route('sales.purchase_order.index')
+            return redirect()->route('admin_purchasing.purchase_order.index')
                 ->with('error', 'Purchase Order yang sudah diterima tidak dapat diedit.');
         }
 
@@ -107,7 +107,7 @@ class PurchaseOrderController extends Controller
 
         $purchase_order->load('detail.produk');
 
-        return view('sales.purchase_order.edit', compact('purchase_order', 'suppliers', 'produks', 'satuanList'));
+        return view('admin_purchasing.purchase_order.edit', compact('purchase_order', 'suppliers', 'produks', 'satuanList'));
     }
 
     public function update(PurchaseOrderRequest $request, PengadaanHeader $purchase_order)
@@ -116,7 +116,7 @@ class PurchaseOrderController extends Controller
         $hasReceivedItems = $purchase_order->detail()->whereNotNull('jumlah_diterima_baik')->exists();
         
         if ($hasReceivedItems) {
-            return redirect()->route('sales.purchase_order.index')
+            return redirect()->route('admin_purchasing.purchase_order.index')
                 ->with('error', 'Purchase Order yang sudah diterima tidak dapat diedit.');
         }
 
@@ -152,7 +152,7 @@ class PurchaseOrderController extends Controller
             }
         });
 
-        return redirect()->route('sales.purchase_order.index')
+        return redirect()->route('admin_purchasing.purchase_order.index')
             ->with('success', 'Purchase Order berhasil diperbarui.');
     }
 
@@ -162,7 +162,7 @@ class PurchaseOrderController extends Controller
         $hasReceivedItems = $purchase_order->detail()->whereNotNull('jumlah_diterima_baik')->exists();
         
         if ($hasReceivedItems) {
-            return redirect()->route('sales.purchase_order.index')
+            return redirect()->route('admin_purchasing.purchase_order.index')
                 ->with('error', 'Purchase Order yang sudah diterima tidak dapat dihapus.');
         }
 
@@ -179,7 +179,7 @@ class PurchaseOrderController extends Controller
             $purchase_order->delete();
         });
 
-        return redirect()->route('sales.purchase_order.index')
+        return redirect()->route('admin_purchasing.purchase_order.index')
             ->with('success', 'Purchase Order berhasil dihapus.');
     }
 }
