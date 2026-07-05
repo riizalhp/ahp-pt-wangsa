@@ -59,11 +59,14 @@
                                         
                                         <form action="{{ route('admin_purchasing.purchase_order.destroy', $header->id) }}" 
                                               method="POST" 
-                                              onsubmit="return confirm('Apakah Anda yakin ingin menghapus Purchase Order ini?');">
+                                              class="delete-form"
+                                              data-has-received="{{ $header->has_received_items ? '1' : '0' }}"
+                                              onsubmit="return confirmDelete(this);">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit"
-                                                    class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-500 hover:text-white transition-colors duration-150 text-xs font-bold">
+                                                    class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg {{ $header->has_received_items ? 'bg-orange-50 text-orange-600 hover:bg-orange-500' : 'bg-red-50 text-red-600 hover:bg-red-500' }} hover:text-white transition-colors duration-150 text-xs font-bold"
+                                                    title="{{ $header->has_received_items ? '⚠️ PO sudah diterima - hati-hati!' : 'Hapus Purchase Order' }}">
                                                 <i class="fas fa-trash text-[11px]"></i> Hapus
                                             </button>
                                         </form>
@@ -76,4 +79,22 @@
             @endif
         </div>
     </div>
+
+    <script>
+        function confirmDelete(form) {
+            const hasReceived = form.dataset.hasReceived === '1';
+            let message = '';
+            
+            if (hasReceived) {
+                message = '⚠️ PERINGATAN!\n\n' +
+                        'Purchase Order ini SUDAH DITERIMA!\n' +
+                        'Menghapus PO yang sudah diterima dapat mempengaruhi data laporan dan penerimaan barang.\n\n' +
+                        'Apakah Anda YAKIN ingin menghapus?';
+            } else {
+                message = 'Apakah Anda yakin ingin menghapus Purchase Order ini?';
+            }
+            
+            return confirm(message);
+        }
+    </script>
 </x-layouts.app>
