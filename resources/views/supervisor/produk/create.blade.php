@@ -49,8 +49,17 @@
                     <input type="text" name="merk" id="merk" required value="{{ old('merk') }}"
                            class="block w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all outline-none text-sm text-slate-800 font-medium"
                            placeholder="Contoh: Hansol">
-                    @error('merk') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                 </div>
+
+                <!-- Error untuk kombinasi nama+merk+ukuran (full width) -->
+                @error('merk')
+                    <div class="sm:col-span-2 -mt-3">
+                        <div class="bg-red-50 border border-red-200 rounded-xl p-3 flex items-start gap-2">
+                            <i class="fas fa-exclamation-circle text-red-500 mt-0.5"></i>
+                            <span class="text-xs text-red-600 font-medium">{{ $message }}</span>
+                        </div>
+                    </div>
+                @enderror
 
                 <!-- Ukuran -->
                 <div class="sm:col-span-2">

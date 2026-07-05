@@ -24,5 +24,6 @@ class AppServiceProvider extends ServiceProvider
         }
         \App\Models\Pengadaan::observe(\App\Observers\PengadaanObserver::class);
         \App\Models\PengadaanDetail::observe(\App\Observers\PengadaanDetailObserver::class);
+        \App\Models\PengadaanHeader::observe(\App\Observers\PengadaanHeaderObserver::class);
     }
 }

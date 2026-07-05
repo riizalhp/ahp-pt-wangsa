@@ -163,33 +163,82 @@ class ProdukController extends Controller
     }
 
     /**
-     * Delete the specified product, guarded against use in procurement details.
+     * Delete the specified product and recalculate affected supplier metrics.
+     * 
+     * When a product is deleted:
+     * 1. Database automatically sets produk_id to NULL in data_pengadaan and data_pengadaan_detail (SET NULL constraint)
+     * 2. Performance metrics are recalculated for all affected suppliers
+     * 3. Historical procurement records are preserved with NULL produk_id
+     * 
      * Requirements: 2.8
      */
     public function destroy(Produk $produk)
     {
-        // Check if product is used in procurement details
-        if (PengadaanDetail::where('produk_id', $produk->id)->exists()) {
-            return redirect()->route('supervisor.produk.index')
-                ->with('error', 'Produk tidak dapat dihapus karena masih digunakan dalam data pengadaan.');
-        }
+        DB::beginTransaction();
 
-        // Check if product's supplier is used in any penilaian
-        $supplierId = $produk->supplier_id;
-        if ($supplierId) {
-            $usedInPenilaian = \App\Models\PenilaianSupplier::where('a_supplier_id', $supplierId)
-                ->orWhere('b_supplier_id', $supplierId)
-                ->exists();
+        try {
+            // Collect all supplier IDs that will be affected by this deletion
+            $affectedSupplierIds = collect();
 
-            if ($usedInPenilaian) {
-                return redirect()->route('supervisor.produk.index')
-                    ->with('error', 'Produk tidak dapat dihapus karena supplier-nya masih dalam penilaian. Gunakan tombol Refresh di halaman Penilaian untuk reset penilaian terlebih dahulu.');
+            // 1. Get suppliers from data_pengadaan that reference this product
+            $pengadaanSuppliers = \App\Models\Pengadaan::where('produk_id', $produk->id)
+                ->whereNotNull('supplier_id')
+                ->distinct()
+                ->pluck('supplier_id');
+            $affectedSupplierIds = $affectedSupplierIds->merge($pengadaanSuppliers);
+
+            // 2. Get suppliers from data_pengadaan_detail via header that reference this product
+            $detailSuppliers = PengadaanDetail::where('produk_id', $produk->id)
+                ->whereNotNull('pengadaan_id')
+                ->with('header:id,supplier_id')
+                ->get()
+                ->pluck('header.supplier_id')
+                ->filter();
+            $affectedSupplierIds = $affectedSupplierIds->merge($detailSuppliers);
+
+            // 3. Add the product's own supplier if it exists
+            if ($produk->supplier_id) {
+                $affectedSupplierIds->push($produk->supplier_id);
             }
+
+            // Remove duplicates and filter out nulls
+            $affectedSupplierIds = $affectedSupplierIds->unique()->filter()->values();
+
+            // Delete the product (database will automatically SET NULL in related tables via foreign key constraint)
+            $produk->delete();
+
+            // Recalculate metrics for all affected suppliers
+            // This ensures supplier performance data reflects only existing products
+            if ($affectedSupplierIds->isNotEmpty()) {
+                $metricsService = app(\App\Services\Supplier\SupplierMetricsService::class);
+                
+                foreach ($affectedSupplierIds as $supplierId) {
+                    try {
+                        $metricsService->recalculateForSupplier($supplierId);
+                        \Log::info("Recalculated metrics for supplier ID: {$supplierId}");
+                    } catch (\Exception $e) {
+                        \Log::error("Failed to recalculate metrics for supplier {$supplierId}: " . $e->getMessage());
+                        // Continue with other suppliers even if one fails
+                    }
+                }
+            }
+
+            DB::commit();
+
+            $supplierCount = $affectedSupplierIds->count();
+            $message = $supplierCount > 0 
+                ? "Produk berhasil dihapus dan kinerja {$supplierCount} supplier telah diperbarui."
+                : "Produk berhasil dihapus.";
+
+            return redirect()->route('supervisor.produk.index')
+                ->with('success', $message);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error("Failed to delete product {$produk->id}: " . $e->getMessage());
+
+            return redirect()->route('supervisor.produk.index')
+                ->with('error', 'Gagal menghapus produk: ' . $e->getMessage());
         }
-
-        $produk->delete();
-
-        return redirect()->route('supervisor.produk.index')
-            ->with('success', 'Produk berhasil dihapus.');
     }
 }

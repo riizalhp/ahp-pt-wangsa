@@ -28,9 +28,6 @@
     <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden mt-8">
         <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
             <h3 class="text-sm font-bold text-slate-800 tracking-wide">Daftar Antrean Penerimaan (Belum Masuk Aktual)</h3>
-            <a href="{{ route('logistik.aktual.index') }}" class="text-xs font-bold text-teal hover:text-teal-dark flex items-center gap-1">
-                Proses Semua <i class="fas fa-chevron-right text-[10px]"></i>
-            </a>
         </div>
         <div class="p-6">
             @if($pendingDeliveries->isEmpty())

@@ -170,10 +170,13 @@ class PurchaseOrderController extends Controller
                 \Storage::disk('public')->delete($purchase_order->foto);
             }
 
-            // Delete details
-            $purchase_order->detail()->delete();
+            // Delete details individually to trigger model events (deleted observer)
+            // ponytail: triggers PengadaanDetailObserver::deleted() which updates supplier metrics
+            foreach ($purchase_order->detail as $detail) {
+                $detail->delete();
+            }
 
-            // Delete header
+            // Delete header to trigger model events (deleted observer)
             $purchase_order->delete();
         });
 
