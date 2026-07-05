@@ -27,7 +27,7 @@
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                         <i class="fas fa-user"></i>
                     </div>
-                    <input id="username" name="username" type="text" required value="{{ old('username') }}" 
+                    <input id="username" name="username" type="text" required value="{{ old('username') }}"
                            class="block w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-teal focus:ring-4 focus:ring-teal/15 transition-all duration-200 outline-none text-sm text-slate-800 font-medium" 
                            placeholder="Masukkan username Anda">
                 </div>
