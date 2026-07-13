@@ -9,6 +9,7 @@ use App\Models\Produk;
 use App\Models\Supplier;
 use App\Support\NameSearch;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProdukController extends Controller
 {
