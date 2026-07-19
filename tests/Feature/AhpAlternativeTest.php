@@ -84,6 +84,7 @@ class AhpAlternativeTest extends PropertyTestCase
             }
 
             session()->forget('ahp_selected_suppliers');
+            session()->forget('ahp_selected_products');
         });
     }
 

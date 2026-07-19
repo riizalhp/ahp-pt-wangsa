@@ -63,8 +63,16 @@
                             <tbody class="divide-y divide-slate-100 text-sm font-medium">
                                 @foreach($rankings as $rank)
                                     @php
-                                        // Get products from this supplier
-                                        $products = $rank->supplier->produk->take(3);
+                                        // Get products from this supplier, filtered by selected products in session if available
+                                        $selectedProductIds = session('ahp_selected_products', []);
+                                        $allProducts = $rank->supplier->produk;
+                                        if (!empty($selectedProductIds)) {
+                                            $products = $allProducts->whereIn('id', $selectedProductIds);
+                                        } else {
+                                            $products = $allProducts;
+                                        }
+                                        $totalProductsCount = $products->count();
+                                        $productsLimit = $products->take(3);
                                     @endphp
                                     <tr class="hover:bg-slate-50/40">
                                         <td class="py-3.5">
@@ -83,10 +91,10 @@
                                             @endif
                                         </td>
                                         <td class="py-3.5 text-xs text-slate-600">
-                                            @if($products->isEmpty())
+                                            @if($productsLimit->isEmpty())
                                                 <span class="italic text-slate-400">Belum ada produk</span>
                                             @else
-                                                @foreach($products as $product)
+                                                @foreach($productsLimit as $product)
                                                     <div class="mb-1">
                                                         <span class="font-semibold text-slate-700">{{ $product->nama }}</span>
                                                         @if($product->merk || $product->ukuran)
@@ -100,8 +108,8 @@
                                                         @endif
                                                     </div>
                                                 @endforeach
-                                                @if($rank->supplier->produk->count() > 3)
-                                                    <span class="text-slate-400 italic text-[10px]">+{{ $rank->supplier->produk->count() - 3 }} produk lainnya</span>
+                                                @if($totalProductsCount > 3)
+                                                    <span class="text-slate-400 italic text-[10px]">+{{ $totalProductsCount - 3 }} produk lainnya</span>
                                                 @endif
                                             @endif
                                         </td>

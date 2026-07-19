@@ -412,7 +412,13 @@
                 <tbody>
                     @foreach($rankings as $rank)
                         @php
-                            $products = $rank->supplier->produk;
+                            $selectedProductIds = session('ahp_selected_products', []);
+                            $allProducts = $rank->supplier->produk;
+                            if (!empty($selectedProductIds)) {
+                                $products = $allProducts->whereIn('id', $selectedProductIds);
+                            } else {
+                                $products = $allProducts;
+                            }
                         @endphp
                         <tr>
                             <td class="text-center">

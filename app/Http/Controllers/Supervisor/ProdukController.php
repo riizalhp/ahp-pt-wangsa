@@ -172,9 +172,17 @@ class ProdukController extends Controller
      * 3. Historical procurement records are preserved with NULL produk_id
      * 
      * Requirements: 2.8
-     */
     public function destroy(Produk $produk)
     {
+        // Check if product is referenced in procurement
+        $usedInPengadaan = \App\Models\Pengadaan::where('produk_id', $produk->id)->exists();
+        $usedInDetail = \App\Models\PengadaanDetail::where('produk_id', $produk->id)->exists();
+
+        if ($usedInPengadaan || $usedInDetail) {
+            return redirect()->route('supervisor.produk.index')
+                ->with('error', 'Produk tidak dapat dihapus karena masih digunakan dalam data pengadaan.');
+        }
+
         DB::beginTransaction();
 
         try {

@@ -256,6 +256,7 @@ class LaporanController extends Controller
             
             // Clear session data
             session()->forget('ahp_selected_suppliers');
+            session()->forget('ahp_selected_products');
         });
 
         return redirect()
