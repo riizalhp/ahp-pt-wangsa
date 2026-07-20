@@ -172,6 +172,7 @@ class ProdukController extends Controller
      * 3. Historical procurement records are preserved with NULL produk_id
      * 
      * Requirements: 2.8
+     */
     public function destroy(Produk $produk)
     {
         // Check if product is referenced in procurement
