@@ -41,7 +41,7 @@ class ProdukCrudTest extends TestCase
     {
         Produk::create([
             'kode' => 'P-001', 'nama' => 'Kertas A4', 'satuan' => 'rim', 'harga' => 50000,
-            'supplier_id' => $this->supplier->id,
+            'supplier_id' => $this->supplier->id, 'merk' => 'Sinar Dunia',
         ]);
 
         $response = $this->actingAs($this->supervisor)
@@ -74,6 +74,7 @@ class ProdukCrudTest extends TestCase
                 'harga'       => 5000,
                 'supplier_id' => $this->supplier->id,
                 'jenis_produk' => 'ATK',
+                'merk'        => 'Standard',
             ]);
 
         $response->assertRedirect(route('supervisor.produk.index'));
@@ -88,6 +89,7 @@ class ProdukCrudTest extends TestCase
                 'satuan'      => 'pcs',
                 'harga'       => 5000,
                 'supplier_id' => $this->supplier->id,
+                'merk'        => 'Standard',
             ]);
 
         $response->assertSessionHasErrors('nama');
@@ -100,6 +102,7 @@ class ProdukCrudTest extends TestCase
                 'nama'   => 'Produk Tanpa Supplier',
                 'satuan' => 'pcs',
                 'harga'  => 1000,
+                'merk'   => 'Standard',
             ]);
 
         $response->assertSessionHasErrors('supplier_id');
@@ -113,6 +116,7 @@ class ProdukCrudTest extends TestCase
                 'satuan'      => 'pcs',
                 'harga'       => 1000,
                 'supplier_id' => 99999,
+                'merk'        => 'Standard',
             ]);
 
         $response->assertSessionHasErrors('supplier_id');
@@ -124,7 +128,7 @@ class ProdukCrudTest extends TestCase
     {
         $produk = Produk::create([
             'kode' => 'P-UPD', 'nama' => 'Old Produk', 'satuan' => 'pcs', 'harga' => 1000,
-            'supplier_id' => $this->supplier->id,
+            'supplier_id' => $this->supplier->id, 'merk' => 'OldBrand',
         ]);
 
         $response = $this->actingAs($this->supervisor)
@@ -133,6 +137,7 @@ class ProdukCrudTest extends TestCase
                 'satuan'      => 'pcs',
                 'harga'       => 2000,
                 'supplier_id' => $this->supplier->id,
+                'merk'        => 'NewBrand',
             ]);
 
         $response->assertRedirect(route('supervisor.produk.index'));
@@ -145,7 +150,7 @@ class ProdukCrudTest extends TestCase
     {
         $produk = Produk::create([
             'kode' => 'P-DEL', 'nama' => 'To Delete', 'satuan' => 'pcs', 'harga' => 1,
-            'supplier_id' => $this->supplier->id,
+            'supplier_id' => $this->supplier->id, 'merk' => 'Standard',
         ]);
 
         $response = $this->actingAs($this->supervisor)
@@ -159,7 +164,7 @@ class ProdukCrudTest extends TestCase
     {
         $produk = Produk::create([
             'kode' => 'P-INUSE', 'nama' => 'In Use', 'satuan' => 'pcs', 'harga' => 1,
-            'supplier_id' => $this->supplier->id,
+            'supplier_id' => $this->supplier->id, 'merk' => 'Standard',
         ]);
 
         $header = PengadaanHeader::create([
@@ -181,5 +186,43 @@ class ProdukCrudTest extends TestCase
 
         $response->assertSessionHas('error');
         $this->assertDatabaseHas('data_produk', ['id' => $produk->id]);
+    }
+
+    public function testDestroyRejectsProdukInActiveAhpEvaluation(): void
+    {
+        // 1. Create a second supplier and product
+        $supplierB = Supplier::create(['kode' => 'SUP-B', 'nama' => 'Supplier B']);
+        $produk = Produk::create([
+            'kode' => 'P-AHP', 'nama' => 'AHP Produk', 'satuan' => 'pcs', 'harga' => 10,
+            'supplier_id' => $this->supplier->id, 'merk' => 'Standard',
+        ]);
+
+        // 2. Create kriteria & subkriteria
+        $kriteria = \App\Models\Kriteria::create(['kode' => 'K-1', 'nama' => 'Kriteria 1']);
+        $subkriteria = \App\Models\Subkriteria::create([
+            'kriteria_id' => $kriteria->id,
+            'kode' => 'S-1',
+            'nama' => 'Subkriteria 1'
+        ]);
+
+        // 3. Create PenilaianSupplier to indicate active evaluation
+        \App\Models\PenilaianSupplier::create([
+            'subkriteria_id' => $subkriteria->id,
+            'a_supplier_id' => $this->supplier->id,
+            'b_supplier_id' => $supplierB->id,
+            'nilai' => 1.0,
+        ]);
+
+        // 4. Act with product in the Cache
+        \Illuminate\Support\Facades\Cache::forever('ahp_selected_products', [$produk->id]);
+
+        $response = $this->actingAs($this->supervisor)
+            ->delete(route('supervisor.produk.destroy', $produk->id));
+
+        $response->assertSessionHas('error', 'Produk "' . $produk->nama . '" tidak dapat dihapus karena masih dalam penilaian. Gunakan tombol "Reset Penilaian" di halaman Laporan Penilaian untuk reset semua data penilaian terlebih dahulu.');
+        $this->assertDatabaseHas('data_produk', ['id' => $produk->id]);
+
+        // Cleanup cache
+        \Illuminate\Support\Facades\Cache::forget('ahp_selected_products');
     }
 }

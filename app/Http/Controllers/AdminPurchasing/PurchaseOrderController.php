@@ -164,6 +164,14 @@ class PurchaseOrderController extends Controller
 
     public function destroy(PengadaanHeader $purchase_order)
     {
+        // Only allow deleting if no items have been received yet
+        $hasReceivedItems = $purchase_order->detail()->whereNotNull('jumlah_diterima_baik')->exists();
+        
+        if ($hasReceivedItems) {
+            return redirect()->route('admin_purchasing.purchase_order.index')
+                ->with('error', 'Purchase Order yang sudah diterima tidak dapat dihapus.');
+        }
+
         DB::transaction(function () use ($purchase_order) {
             // Delete photo if exists
             if ($purchase_order->foto && \Storage::disk('public')->exists($purchase_order->foto)) {

@@ -19,6 +19,8 @@
             color: #2d3748;
             background-color: #f1f5f9;
             padding: 24px;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
         }
 
         /* Sheet that mimics a paper page on screen */
@@ -266,9 +268,12 @@
         }
 
         .weight-color {
+            display: inline-block;
             width: 10px;
             height: 10px;
-            border-radius: 2px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            border: 1px solid rgba(0,0,0,0.15);
         }
 
         .weight-value {
@@ -285,6 +290,8 @@
             body {
                 background: #ffffff;
                 padding: 0;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
             .toolbar { display: none !important; }
             .sheet {
@@ -412,7 +419,7 @@
                 <tbody>
                     @foreach($rankings as $rank)
                         @php
-                            $selectedProductIds = session('ahp_selected_products', []);
+                            $selectedProductIds = \Illuminate\Support\Facades\Cache::get('ahp_selected_products', []);
                             $allProducts = $rank->supplier->produk;
                             if (!empty($selectedProductIds)) {
                                 $products = $allProducts->whereIn('id', $selectedProductIds);

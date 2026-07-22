@@ -175,6 +175,15 @@ class ProdukController extends Controller
      */
     public function destroy(Produk $produk)
     {
+        // Check if product is in active AHP evaluation
+        $hasPenilaian = \App\Models\PenilaianSupplier::exists();
+        $selectedProductIds = \Illuminate\Support\Facades\Cache::get('ahp_selected_products', []);
+
+        if ($hasPenilaian && in_array($produk->id, $selectedProductIds)) {
+            return redirect()->route('supervisor.produk.index')
+                ->with('error', 'Produk "' . $produk->nama . '" tidak dapat dihapus karena masih dalam penilaian. Gunakan tombol "Reset Penilaian" di halaman Laporan Penilaian untuk reset semua data penilaian terlebih dahulu.');
+        }
+
         // Check if product is referenced in procurement
         $usedInPengadaan = \App\Models\Pengadaan::where('produk_id', $produk->id)->exists();
         $usedInDetail = \App\Models\PengadaanDetail::where('produk_id', $produk->id)->exists();

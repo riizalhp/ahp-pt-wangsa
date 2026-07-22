@@ -297,7 +297,7 @@ class AhpController extends Controller
 
         // Store in session so supplierForm can filter by these suppliers
         session(['ahp_selected_suppliers' => $supplierIds]);
-        session(['ahp_selected_products' => $request->selected_produk_ids]);
+        \Illuminate\Support\Facades\Cache::forever('ahp_selected_products', $request->selected_produk_ids);
 
         return redirect()->route('supervisor.ahp.kriteria')
             ->with('success', 'Alternatif produk berhasil dipilih. Lanjutkan dengan perbandingan kriteria.');
@@ -470,7 +470,7 @@ class AhpController extends Controller
             
             // Clear session data
             session()->forget('ahp_selected_suppliers');
-            session()->forget('ahp_selected_products');
+            \Illuminate\Support\Facades\Cache::forget('ahp_selected_products');
         });
 
         return redirect()->route('supervisor.ahp.alternatif')

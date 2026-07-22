@@ -63,8 +63,8 @@
                             <tbody class="divide-y divide-slate-100 text-sm font-medium">
                                 @foreach($rankings as $rank)
                                     @php
-                                        // Get products from this supplier, filtered by selected products in session if available
-                                        $selectedProductIds = session('ahp_selected_products', []);
+                                        // Get products from this supplier, filtered by selected products in Cache if available
+                                        $selectedProductIds = \Illuminate\Support\Facades\Cache::get('ahp_selected_products', []);
                                         $allProducts = $rank->supplier->produk;
                                         if (!empty($selectedProductIds)) {
                                             $products = $allProducts->whereIn('id', $selectedProductIds);

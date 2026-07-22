@@ -148,11 +148,20 @@ class PerformanceCalculator
         }
 
         $sumHari = 0;
+        $distinctPos = [];
         foreach ($receivedItems as $item) {
             $sumHari += (int) ($item['hari_keterlambatan'] ?? 0);
+            if (isset($item['pengadaan_id'])) {
+                $distinctPos[$item['pengadaan_id']] = true;
+            }
         }
 
-        return $this->safeDivide((float) $sumHari, (float) $totalItems);
+        $divisor = count($distinctPos);
+        if ($divisor === 0) {
+            return 0.0;
+        }
+
+        return $this->safeDivide((float) $sumHari, (float) $divisor);
     }
 
     /**

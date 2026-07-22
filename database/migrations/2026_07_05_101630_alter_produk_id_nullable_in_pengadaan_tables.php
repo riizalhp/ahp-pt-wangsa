@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -15,6 +16,16 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (DB::getDriverName() === 'sqlite') {
+            Schema::table('data_pengadaan', function (\Illuminate\Database\Schema\Blueprint $table) {
+                $table->unsignedBigInteger('produk_id')->nullable()->change();
+            });
+            Schema::table('data_pengadaan_detail', function (\Illuminate\Database\Schema\Blueprint $table) {
+                $table->unsignedBigInteger('produk_id')->nullable()->change();
+            });
+            return;
+        }
+
         // Use raw SQL for reliable constraint modification
         
         // 1. Alter data_pengadaan table
@@ -37,6 +48,16 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (DB::getDriverName() === 'sqlite') {
+            Schema::table('data_pengadaan', function (\Illuminate\Database\Schema\Blueprint $table) {
+                $table->unsignedBigInteger('produk_id')->nullable(false)->change();
+            });
+            Schema::table('data_pengadaan_detail', function (\Illuminate\Database\Schema\Blueprint $table) {
+                $table->unsignedBigInteger('produk_id')->nullable(false)->change();
+            });
+            return;
+        }
+
         // 1. Revert data_pengadaan table
         DB::statement('ALTER TABLE data_pengadaan DROP FOREIGN KEY data_pengadaan_produk_id_fkey');
         DB::statement('ALTER TABLE data_pengadaan MODIFY produk_id BIGINT UNSIGNED NOT NULL');
